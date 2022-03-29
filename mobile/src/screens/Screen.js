@@ -6,7 +6,7 @@ import colors from '../styles/colors';
 function Screen({children, style}) {
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar backgroundColor={colors.primary} barStyle='default'/>
+            <StatusBar barStyle='dark-content' backgroundColor={colors.background}/>
             <View style={[style]}>
                 {children}
             </View>
@@ -17,10 +17,10 @@ function Screen({children, style}) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: colors.background,
         // paddingTop: StatusBar.currentHeight,
-        paddingLeft: 10,
-        paddingRight: 10
+        paddingLeft: 15,
+        paddingRight: 15
     }
 })
 
