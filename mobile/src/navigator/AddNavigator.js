@@ -4,9 +4,7 @@ import Screen from '../screens/Screen';
 
 function AddNavigator(props) {
     return (
-        <Screen>
-            <Text>AddNavigator</Text>
-        </Screen>
+        <></>
     );
 }
 

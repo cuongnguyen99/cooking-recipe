@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
         height: 200,
         width: 130,
         borderRadius: 10,
-        marginRight: 10
+        marginRight: 15
     },
     layout: {
         backgroundColor: 'black',

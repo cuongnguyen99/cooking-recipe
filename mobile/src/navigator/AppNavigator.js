@@ -18,6 +18,7 @@ function AppNavigator(props) {
             barStyle={{
                 backgroundColor: colors.primary,
             }}
+            initialRouteName='SearchNavigator'
         >
             <Tab.Screen name='HomeNavigator' component={HomeNavigator} 
                 options={{

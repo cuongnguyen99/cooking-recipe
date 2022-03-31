@@ -5,7 +5,7 @@ import colors from '../styles/colors';
 
 function Screen({children, style}) {
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, style]}>
             <StatusBar barStyle='dark-content' backgroundColor={colors.background}/>
             <View style={[style]}>
                 {children}
