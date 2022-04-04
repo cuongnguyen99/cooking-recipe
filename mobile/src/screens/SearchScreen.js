@@ -101,7 +101,7 @@ function SearchScreen({}) {
                         value= {input}
                         onChangeText= {(text) => setInput(text)}
                     />
-                    <ListingItem name='search' size={50} contentColor={colors.primary}  />
+                    <ListingItem name='search' size={50} contentColor={colors.primary}  backgroundColor={colors.box_item}/>
                 </View>
                 <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
                     {
@@ -140,12 +140,13 @@ const styles = StyleSheet.create({
         elevation: 2
     },
     input: {
-        backgroundColor: colors.secondary,
+        backgroundColor: colors.box_item,
         width: '80%',
         borderRadius: 30,
         paddingLeft: 20,
         height: 50,
-        fontSize: 16
+        fontSize: 16,
+        color: colors.text_black
     },
     inputButton: {
         backgroundColor: colors.secondary,

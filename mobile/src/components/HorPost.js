@@ -7,7 +7,11 @@ import colors from '../styles/colors';
 function HorPost({mainImg,title, description, username, userImg, onPress, iconPress}) {
     
     return (
-        <View>
+        <View
+            style={{
+                borderRadius: 15
+            }}
+        >
             <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
                 <Image source={{uri: mainImg}} style={styles.mainImg}/>
                 <View style={styles.overlay}/>
@@ -30,8 +34,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         width: '100%',
         height: 160,
-        backgroundColor: colors.secondary,
+        backgroundColor: colors.box_item,
         borderRadius: 15,
+        shadowColor: "#000",
+        elevation: 1,
     },
     mainImg: {
         height: '100%',
@@ -45,7 +51,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     title: {
-        color: colors.text_primary,
+        color: colors.secondary,
         fontWeight: 'bold',
         fontSize: 24,
         // flex: 0.3
@@ -67,7 +73,7 @@ const styles = StyleSheet.create({
         borderColor: colors.text_primary
     },
     username: {
-        color: colors.text_primary,
+        color: colors.secondary,
         fontSize: 14,
         marginLeft: 5,
         fontWeight: 'bold'
@@ -85,7 +91,9 @@ const styles = StyleSheet.create({
         height: '100%',
         width: 180,
         opacity: 0.3,
-        borderRadius: 15
+        borderRadius: 15,
+        shadowColor: "#000",
+        elevation: 1,
     }
 })
 

@@ -10,7 +10,7 @@ function ListingItem({step = null, size, name,  contentColor = colors.text_prima
             style={[styles.container, {width: size, height: size, borderRadius: size/2, backgroundColor: backgroundColor}, style]}
         >
             {
-                step ? (<Text style={{color: contentColor}}>{step}</Text>) :
+                step ? (<Text style={{color: contentColor, fontSize: size/2}}>{step}</Text>) :
                 (<Icon name={name} size={size/2} color={contentColor}/>)
             }
         </View>
