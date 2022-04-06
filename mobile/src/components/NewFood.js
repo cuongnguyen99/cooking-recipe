@@ -10,7 +10,7 @@ function NewFood({title, image, avatar, onPress}) {
                 <View style={styles.layout}>
                 </View>
                 <Image style={styles.avatar} source={{uri: avatar}}/>
-                <AppText style={styles.title} numberOfLines={1} ellipsizeMode='tail'>{title}</AppText>
+                <AppText style={styles.title} numberOfLines={2} ellipsizeMode='tail'>{title}</AppText>
             </ImageBackground>
         </TouchableOpacity>
     );

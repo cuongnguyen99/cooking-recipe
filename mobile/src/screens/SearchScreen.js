@@ -67,7 +67,7 @@ const data = [
     },
 ];
 
-function SearchScreen({}) {
+function SearchScreen({navigation, route}) {
     const [input, setInput] = useState('');
     const [product, setProduct] = useState(data);
     const [filter, setFilter] = useState([]);

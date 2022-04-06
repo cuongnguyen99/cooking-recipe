@@ -9,7 +9,7 @@ import Separator from '../components/Separator';
 import ListingItem from '../components/ListingItem';
 import Button from '../components/Button';
 
-function AddScreen({}) {
+function AddScreen({navigation, route}) {
     const [desHeight, setDesHeight] = useState(30);
 
     const handleImage = () => {

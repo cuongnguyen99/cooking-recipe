@@ -10,7 +10,7 @@ import Screen from './Screen';
 const data = [
     {
         id: 1,
-        title: 'Bánh tráng trộn',
+        title: 'Bánh tráng trộn đà nẵng',
         userURL: 'https://i.ex-cdn.com/phatgiao.org.vn/files/content/2019/04/02/banh1024x626_1-1750.jpg',
         foodURL: 'https://meta.vn/Data/image/2020/11/20/banh-trang-tron-5.jpg'
     },
@@ -69,9 +69,13 @@ const categories = [
     },
 ]
 
-function HomeScreen(props) {
+function HomeScreen({navigation, route}) {
     const newArivalPress = () => {
         console.log('New Food!');
+    }
+
+    const handleCategoryPress = () => {
+        navigation.navigate('FoodList');
     }
 
     return (
@@ -85,6 +89,7 @@ function HomeScreen(props) {
                 <HeaderNavigate
                     title='Newest Food'
                     style={styles.newFoodHeader}
+                    onPress={handleCategoryPress}
                 />
 
                 {/* New Food */}
@@ -111,10 +116,12 @@ function HomeScreen(props) {
                         <HeaderNavigate
                                     title={item.title}
                                     style={styles.categoryHeader}
+                                    onPress={handleCategoryPress}
                         />
                         <Category
                             title={item.title}
                             image={item.imgUrl}
+                            onPress={handleCategoryPress}
                         />
                         <View style={styles.categoryFooter} />
                     </View>

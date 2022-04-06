@@ -1,16 +1,16 @@
-import React from 'react';
-import { FlatList, View, StyleSheet, ScrollView } from 'react-native';
-import AppText from '../components/AppText';
-import HorPost from '../components/HorPost';
+import React, { useLayoutEffect } from 'react';
+import {FlatList, StatusBar, StyleSheet, View} from 'react-native';
+import VerPost from '../components/VerPost';
+import colors from '../styles/colors';
 import Screen from './Screen';
 
 const data = [
     {
         id: 1,
-        title: 'Cá nướng',
+        title: 'Cá nướng mỡ xoài mắc mật',
         description: 'Món cá chim nướng muối ớt, tiêu xanh và ớt xiêm với 3 cách làm trên vừa thơm ngon vừa cay cay lạ miệng lại cực kì dễ thực hiện. Hãy nhanh chân chạy ngay vào bếp và thực hiện ngay thôi nào.',
         userImg: 'https://vcdn-vnexpress.vnecdn.net/2019/11/14/IMG-9357-JPG-7490-1573703159.jpg',
-        username: 'loveyou123',
+        username: 'ngobakha_vippro123',
         mainImg: 'https://cdn.tgdd.vn/2020/08/CookProduct/1-1200x676-21.jpg'
     },
     {
@@ -63,65 +63,60 @@ const data = [
     },
 ]
 
-function SaveScreen({navigation, route}) {
+function ListFoodScreen({navigation, route}) {
+    
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerShown: true,
+            headerStyle: {
+                backgroundColor: colors.primary
+            },
+            headerBackVisible: true,
+            headerTitle: ''
+        });
+    }, [navigation]);
+
+    const handleItemPress = () => {
+        navigation.navigate('DetailFood');
+    }
+
     return (
-        <Screen>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={styles.headerContainer}>
-                        <AppText style={styles.header} numberOfLines={1} ellipsizeMode='middle'>Hello Nguyễn Lê Tuấn Cương!</AppText>
-                        <AppText style={styles.subHeader}>Here is your favorite recipes!</AppText>
-                    </View>
-                {/* <FlatList
-                    data= {data}
-                    keyExtractor= {item => item.id}
-                    renderItem= {({item}) => (
-                        <View style={styles.item}>
-                            <HorPost
-                                title={item.title}
-                                mainImg={item.mainImg}
-                                description={item.description}
-                                userImg={item.userImg}
-                                username={item.username}
-                            />
-                        </View>
-                    )}
-                    
-                /> */}
-                {
-                    data.map(item => {
-                        return (
-                            <View style={styles.item} key={item.id}>
-                                <HorPost
-                                    title={item.title}
-                                    mainImg={item.mainImg}
-                                    description={item.description}
-                                    userImg={item.userImg}
-                                    username={item.username}
-                                />
-                            </View>
-                        );
-                    })
-                }
-            </ScrollView>
+        <Screen style={styles.screen}>
+            <StatusBar backgroundColor={colors.primary} barStyle='dark-content'/>
+
+            <FlatList
+                numColumns={2}
+                data={data}
+                keyExtractor={item => item.id}
+                renderItem={({item}) => (
+                    <VerPost
+                        image={item.mainImg}
+                        title={item.title}
+                        userImg={item.userImg}
+                        username={item.username}
+                        onItemPress={handleItemPress}
+                    />
+                )}
+            />
         </Screen>
     );
 }
 
 const styles = StyleSheet.create({
-    headerContainer: {
-        marginBottom: 30,
-        marginTop: 20
+    screen: {
+        paddingLeft: 5,
+        paddingRight: 5,
+        position: 'relative',
     },
     header: {
-        fontWeight: 'bold',
-        fontSize: 30
-    },
-    subHeader: {
-        marginTop: 5,
-    },
-    item: {
-        marginBottom: 20
+        position: 'absolute',
+        width: '100%',
+        height: 40,
+        backgroundColor: colors.primary,
+        zIndex: 1,
+        justifyContent: 'center',
+        alignSelf: 'center',
     }
 })
 
-export default SaveScreen;
+export default ListFoodScreen;

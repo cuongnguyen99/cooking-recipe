@@ -21,7 +21,7 @@ const items = [
     },
 ];
 
-function ProfileScreen({}) {
+function ProfileScreen({navigation, route}) {
     return (
         <Screen style={styles.container}>
             <View style={styles.profile}>
