@@ -8,4 +8,6 @@ export default styles = {
     box_item: '#F2F2F2',
     button_out: '#606161',
     button_remove: '#CC2525',
+    separator: '#343d46',
+    buttonDisable: '#cccccc',
 }

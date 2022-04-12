@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import {Image, ImageBackground, ScrollView, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {Image, ImageBackground, Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
 import colors from '../styles/colors';
 import Screen from './Screen';
 import AppText from '../components/AppText';
@@ -11,6 +11,22 @@ import Button from '../components/Button';
 
 function AddScreen({navigation, route}) {
     const [desHeight, setDesHeight] = useState(30);
+    const [disable, setDisable] = useState(true);
+    const [title, setTitle] = useState('');
+    const [des, setDes] = useState('');
+    const [resource, setResource] = useState('');
+    const [step, setStep] = useState('');
+
+    useEffect(() => {
+        if( resource && step && des && title ) {
+            setDisable(false);
+            console.log(disable);
+        }
+        else {
+            setDisable(true);
+            console.log(disable);
+        }
+    }, [step, resource, des, title]);
 
     const handleImage = () => {
         console.log('Image click');
@@ -32,12 +48,23 @@ function AddScreen({navigation, route}) {
         console.log('Remove step');
     }
 
+    const handleStepChange = (text) => {
+        setStep(text);
+    }
+
+    const handleResourceChange = (text) => {
+        setResource(text);
+    }
+
     const Resource = () => {
         return (
             <View
                 style={styles.resource}
             >
-                <AppInput title='Enter this resource' style={{width: '90%'}} />
+                <AppInput title='Enter this resource' style={{width: '90%'}}
+                    value={resource}
+                    onChangeText={text => handleResourceChange(text)}
+                />
                 <Icon name='x' size={28} color={colors.secondary} onPress={handleRemoveResource}/>
             </View>
         );
@@ -49,7 +76,10 @@ function AddScreen({navigation, route}) {
                 style={styles.resource}
             >
                 <ListingItem step={number} size={size} contentColor={colors.secondary} backgroundColor={colors.box_item}/>
-                <AppInput title='Enter this step' style={{width: '78%'}} />
+                <AppInput title='Enter this step' style={{width: '78%'}}
+                    value={step}
+                    onChangeText={text => handleStepChange(text)}
+                />
                 <Icon name='x' size={28} color={colors.secondary} onPress={handleRemoveResource}/>
             </View>
         );
@@ -62,13 +92,13 @@ function AddScreen({navigation, route}) {
                 {/* Image */}
                 <View style={styles.imageContainer}>
                     <ImageBackground
-                        source={{uri: 'https://cdn.w600.comps.canstockphoto.com/seamless-background-with-hand-drawn-food-image_csp35091073.jpg'}}
+                        source={{uri: '../assets/image/img_background.jpg'}}
                         style={styles.image}
                     >
                         <View
                             style={styles.overlay}
                         >
-                        </View>      
+                        </View>
                         <TouchableWithoutFeedback style={styles.imageContent} onPress={handleImage}>
                             <View style={{flexDirection: 'row', width: '100%', justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 20}}>
                                 <Icon name='camera' size={24} color={colors.text_primary} style={{marginRight: 10}} />
@@ -80,8 +110,12 @@ function AddScreen({navigation, route}) {
 
                 {/* About Food */}
                 <View style={styles.aboutFood} >
-                    <AppInput title='Food name' style={styles.input}/>
-                    <AppInput title='Description about your food' style={[styles.input, {height: 100}]} multiline={true} />
+                    <AppInput title='Food name' style={styles.input} value={title} onChangeText={text => setTitle(text)}/>
+                    <AppInput title='Description about your food'
+                        value={des}
+                        onChangeText={text => setDes(text)}
+                        style={[styles.input, {height: 100}]} multiline={true}
+                    />
                 </View>
 
                 {/* Resources */}
@@ -114,7 +148,10 @@ function AddScreen({navigation, route}) {
                 </View>
 
                 {/* Button */}
-                <Button style={styles.button} title='Create' titleStyle={{fontSize: 20, fontWeight: 'normal'}}/>
+                {
+                    disable ? (<Button style={styles.buttonDisable} title='Create' titleStyle={{fontSize: 20, fontWeight: 'normal'}} disable={true}/>)
+                    : (<Button style={styles.button} title='Create' titleStyle={{fontSize: 20, fontWeight: 'normal'}}/>)
+                }
             </ScrollView>
         </Screen>
     );
@@ -174,6 +211,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 40,
         marginBottom: 40
+    },
+    buttonDisable: {
+        alignSelf: 'center',
+        width: '60%',
+        height: 40,
+        alignItems: 'center',
+        marginTop: 40,
+        marginBottom: 40,
+        backgroundColor: colors.buttonDisable
     },
     title: {
         fontWeight: '600',

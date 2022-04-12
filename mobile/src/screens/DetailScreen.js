@@ -1,11 +1,15 @@
 import React from 'react';
-import { Image, ImageBackground, ScrollView, StyleSheet, View } from 'react-native';
+import { Dimensions, Image, ImageBackground, ScrollView, StyleSheet, View } from 'react-native';
+import {animatedStyles, scrollInterpolator} from '../utils/animations';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 import AppText from '../components/AppText';
 import ListingItem from '../components/ListingItem';
 import colors from '../styles/colors';
 
 import Screen from './Screen';
 import Separator from '../components/Separator';
+import Carousel from 'react-native-snap-carousel';
 
 const resources = [
     {
@@ -53,6 +57,37 @@ const steps = [
     },
 ]
 
+const images = [
+    {
+        id: 1,
+        url: 'https://ngonaz.com/wp-content/uploads/2021/09/cach-lam-ca-vien-chien-1.jpg'
+    },
+    {
+        id: 2,
+        url: 'https://vietgle.vn/wp-content/uploads/2020/10/cach-lam-ca-vien-800x500-1.jpg'
+    },
+    {
+        id: 3,
+        url: 'https://images.foody.vn/res/g79/789094/prof/s576x330/foody-upload-api-foody-mobile-hmn-jpg-181025111824.jpg'
+    },
+    {
+        id: 4,
+        url: 'https://d1sag4ddilekf6.azureedge.net/compressed/merchants/VNGFVN000002br/hero/66a8657cb100483e906b984b50a7eaad_1571898323162358754.jpeg'
+    },
+    {
+        id: 5,
+        url: 'https://images.foody.vn/res/g104/1039545/prof/s1242x600/foody-upload-api-foody-mobile-img_2495-200731135420.jpg'
+    },
+    {
+        id: 6,
+        url: 'https://static.riviu.co/960/image/2021/03/15/79ae51891c103d12e9ebddfeafb9cc80_output.jpeg'
+    }
+]
+
+const SLIDER_WIDTH = Dimensions.get('window').width;
+const ITEM_WIDTH = Math.round(SLIDER_WIDTH);
+const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3/4);
+
 function DetailScreen({navigation, route}) {
 
     const onBackPress = () => {
@@ -65,16 +100,32 @@ function DetailScreen({navigation, route}) {
             paddingRight: 0}}
         >
             <ScrollView>
-                <ImageBackground
-                    source={{uri: 'https://ngonaz.com/wp-content/uploads/2021/09/cach-lam-ca-vien-chien-1.jpg'}}
-                    style={styles.image}
-                    resizeMode='cover'
-                >
-                    <View style={styles.overlay}/>
-                    <ListingItem name='arrow-left' size={40} backgroundColor={colors.box_item} contentColor={colors.secondary} style={styles.backButton} 
-                        onPress={onBackPress}
+                <View>
+                    <Carousel
+                        data={images}
+                        keyExtractor={item => item.id}
+                        renderItem={({item}) => (
+                            <ImageBackground
+                                source={{uri: item.url}}
+                                style={styles.image}
+                                resizeMode='cover'
+                            >
+                                <View style={styles.overlay}/>
+                            </ImageBackground>
+                        )}
+                        sliderWidth={SLIDER_WIDTH}
+                        itemWidth={ITEM_WIDTH}
+                        containerCustomStyle={styles.carouselContainer}
+                        inactiveSlideShift={0}
+                        scrollInterpolator={scrollInterpolator}
+                        slideInterpolatedStyle={animatedStyles}
+                        useScrollView={true}
                     />
-                </ImageBackground>
+                    <ListingItem name='arrow-left' size={40} backgroundColor={colors.box_item} contentColor={colors.secondary} style={styles.backButton} 
+                                    onPress={onBackPress}
+                    />
+                    <Icon name='bookmark' size={40} style={styles.favorite} color={colors.text_primary} />
+                </View>
                 <View style={styles.container}>
                     <AppText style={styles.title} numberOfLines={2} ellipsizeMode='tail'>Cá Viên Chiên Không Dầu</AppText>
 
@@ -130,7 +181,7 @@ function DetailScreen({navigation, route}) {
 const styles = StyleSheet.create({
     image: {
         width: '100%',
-        height: 250
+        height: ITEM_HEIGHT
     },
     overlay: {
         backgroundColor: 'black',
@@ -140,9 +191,16 @@ const styles = StyleSheet.create({
         opacity: 0.2
     },
     backButton: {
+        position: 'absolute',
         top: 10,
         left: 10
     },
+    favorite: {
+        position: 'absolute',
+        top: 10,
+        right: 10
+    }
+    ,
     container: {
         padding: 10
     },
@@ -175,7 +233,7 @@ const styles = StyleSheet.create({
     },
     content: {
         fontSize: 20
-    }
+    },
 })
 
 export default DetailScreen;
