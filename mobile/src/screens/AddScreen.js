@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {Image, ImageBackground, Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
+
 import colors from '../styles/colors';
 import Screen from './Screen';
 import AppText from '../components/AppText';
@@ -9,80 +10,95 @@ import Separator from '../components/Separator';
 import ListingItem from '../components/ListingItem';
 import Button from '../components/Button';
 
+import Resource from '../components/Resource';
+import Step from '../components/Step';
+
 function AddScreen({navigation, route}) {
     const [desHeight, setDesHeight] = useState(30);
     const [disable, setDisable] = useState(true);
     const [title, setTitle] = useState('');
     const [des, setDes] = useState('');
-    const [resource, setResource] = useState('');
-    const [step, setStep] = useState('');
+    const [resources, setResources] = useState([
+        {
+            description: '',
+            post_id: '',
+        },
+    ]);
+    const [steps, setSteps] = useState([
+        {
+            step_number: 1,
+            description: '',
+            post_id: '',
+        },
+    ]);
 
     useEffect(() => {
-        if( resource && step && des && title ) {
+        if( resources && steps && des && title ) {
             setDisable(false);
-            console.log(disable);
         }
         else {
             setDisable(true);
-            console.log(disable);
         }
-    }, [step, resource, des, title]);
+    }, [steps, resources, des, title]);
 
     const handleImage = () => {
         console.log('Image click');
     }
 
     const handleAddResource = () => {
-        console.log('Add Resource');
+        let newArr = resources;
+        let item = {
+            description: '',
+            post_id: '',
+        };
+        newArr = [...newArr, item];
+        setResources(newArr);
     }
 
     const handleAddStep = () => {
-        console.log('Add Step');
+        let newArr = steps;
+        let item = {
+            step_number: newArr[newArr.length - 1].step_number + 1,
+            description: '',
+            post_id: '',
+        };
+        newArr = [...newArr, item];
+        setSteps(newArr);
     }
 
-    const handleRemoveResource = () => {
-        console.log('Remove resource');
+    const handleRemoveResource = (item, index) => {
+        const newArr = resources.filter((m, i) => {
+            if(i != index) {
+                return m;
+            }
+        });
+        setResources(newArr);
     }
 
-    const handleRemoveStep = () => {
-        console.log('Remove step');
+    const handleRemoveStep = (item, index) => {
+        const newArr = steps.filter((m) => {
+            if(m.step_number !== item.step_number) {
+                return m;
+            }
+        });
+        const tempt = newArr.map((m) => {
+            if(m.step_number < item.step_number) {
+                return m;
+            }
+            else {
+                let t = {...m, step_number: m.step_number - 1};
+                return t;
+            }
+        });
+        setSteps(tempt);
     }
 
     const handleStepChange = (text) => {
-        setStep(text);
+        
     }
 
     const handleResourceChange = (text) => {
-        setResource(text);
-    }
-
-    const Resource = () => {
-        return (
-            <View
-                style={styles.resource}
-            >
-                <AppInput title='Enter this resource' style={{width: '90%'}}
-                    value={resource}
-                    onChangeText={text => handleResourceChange(text)}
-                />
-                <Icon name='x' size={28} color={colors.secondary} onPress={handleRemoveResource}/>
-            </View>
-        );
-    }
-
-    const Step = ({number, size}) => {
-        return (
-            <View
-                style={styles.resource}
-            >
-                <ListingItem step={number} size={size} contentColor={colors.secondary} backgroundColor={colors.box_item}/>
-                <AppInput title='Enter this step' style={{width: '78%'}}
-                    value={step}
-                    onChangeText={text => handleStepChange(text)}
-                />
-                <Icon name='x' size={28} color={colors.secondary} onPress={handleRemoveResource}/>
-            </View>
-        );
+        
     }
 
     return (
@@ -121,13 +137,26 @@ function AddScreen({navigation, route}) {
                 {/* Resources */}
                 <View style={styles.aboutFood} >
                     <Separator style={styles.separator}/>
-                    <AppText style={styles.title}>Resources</AppText>
-                    <Resource/>
+                    <AppText style={styles.title}>Ingredients</AppText>
+                    
+                    {
+                        // Resource logic here
+                        resources.map((item, index) => {
+                            return(
+                                <Resource
+                                    item={item}
+                                    index={index}
+                                    key={index}
+                                    onRemoveResource={() => handleRemoveResource(item, index)}
+                                />
+                            );
+                        })
+                    }
                     
                     <TouchableWithoutFeedback style={styles.imageContent} onPress={handleAddResource}>
                         <View style={{flexDirection: 'row', width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 20}}>
                             <Icon name='plus-square' size={26} color={colors.text_black} style={{marginRight: 10}} />
-                            <AppText style={{color: colors.secondary, fontSize: 18}}>Add New Recource</AppText>
+                            <AppText style={{color: colors.secondary, fontSize: 18}}>Add New Ingredient</AppText>
                         </View>
                     </TouchableWithoutFeedback>
                 </View>
@@ -136,13 +165,24 @@ function AddScreen({navigation, route}) {
                 <View style={styles.aboutFood} >
                     <Separator style={styles.separator}/>
                     <AppText style={styles.title}>Steps</AppText>
+                    {
+                        // Step logic here
+                        steps.map((item, index) => {
+                            return (
+                                <Step
+                                    item={item}
+                                    index={index}
+                                    key={index}
+                                    onRemoveStep={() => handleRemoveStep(item, index)}
+                                />
+                            );
+                        })
+                    }
 
-                    <Step number={1} size={40} />
-                    
                     <TouchableWithoutFeedback style={styles.imageContent} onPress={handleAddStep}>
                         <View style={{flexDirection: 'row', width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 20}}>
                             <Icon name='plus-square' size={26} color={colors.text_black} style={{marginRight: 10}} />
-                            <AppText style={{color: colors.secondary, fontSize: 18}}>Add New Recource</AppText>
+                            <AppText style={{color: colors.secondary, fontSize: 18}}>Add New Step</AppText>
                         </View>
                     </TouchableWithoutFeedback>
                 </View>

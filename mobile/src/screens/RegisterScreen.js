@@ -1,12 +1,20 @@
 import React from 'react';
-import { Image, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, View, StyleSheet, TouchableOpacity, TouchableHighlight } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
+
 import AppInput from '../components/AppInput';
 import AppText from '../components/AppText';
 import Button from '../components/Button';
-import colors from '../styles/colors';
 import Screen from './Screen';
 
+import colors from '../styles/colors';
+
 function RegisterScreen({navigation, route}) {
+    
+    const handleBack = () => {
+        navigation.replace('App');
+    }
+
     return (
         <Screen
             style={{
@@ -14,6 +22,9 @@ function RegisterScreen({navigation, route}) {
                 flex: 1
             }}
         >
+            <TouchableHighlight style={styles.icon} onPress={handleBack} underlayColor={colors.buttonDisable}>
+                <Icon name='x' size={35} color={colors.secondary}/>
+            </TouchableHighlight>
             <Image
                 source={require('../assets/image/logo.png')}
                 style={styles.image}
@@ -55,7 +66,7 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         position: 'absolute',
-        bottom: 50,
+        bottom: 80,
         width: '100%',
         alignSelf: 'center',
         justifyContent: 'center',
@@ -63,6 +74,12 @@ const styles = StyleSheet.create({
     },
     button: {
         height: 60
+    },
+    icon: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        borderRadius: 10,
     }
 })
 

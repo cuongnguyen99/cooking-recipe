@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text } from 'react-native';
 import Screen from '../screens/Screen';
 
@@ -7,7 +7,15 @@ import AddScreen from '../screens/AddScreen';
 
 const AddStack = createNativeStackNavigator();
 
-function AddNavigator({}) {
+function AddNavigator({navigation, route}) {
+    const [user, setUser] = useState('A');
+
+    useEffect( ()=> {
+        if(!user) {
+            navigation.replace('Auth');
+        }
+    }, []);
+
     return (
         <AddStack.Navigator
             screenOptions={{

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, Text } from 'react-native';
 import Screen from '../screens/Screen';
 
@@ -7,7 +7,15 @@ import SaveScreen from '../screens/SaveScreen';
 
 const SaveStack = createNativeStackNavigator();
 
-function SaveNavigator(props) {
+function SaveNavigator({navigation, route}) {
+    const [user, setUser] = useState(null);
+
+    useEffect( ()=> {
+        if(!user) {
+            navigation.replace('Auth');
+        }
+    }, []);
+
     return (
         <SaveStack.Navigator
             screenOptions={{

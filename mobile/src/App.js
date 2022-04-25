@@ -6,6 +6,7 @@ import Screen from './screens/Screen';
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './navigator/AppNavigator';
 import colors from './styles/colors';
+import MainNavigator from './navigator/MainNavigator';
 
 function App() {
   useEffect(()=>{
@@ -16,7 +17,7 @@ function App() {
 
   return (
     <NavigationContainer>
-      <AppNavigator/>
+      <MainNavigator/>
     </NavigationContainer>
   );
 }

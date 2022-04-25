@@ -26,37 +26,31 @@ function ProfileScreen({navigation, route}) {
     const [user, setUser] = useState(null);
 
     return (
-            user ? (
-                <Screen style={styles.container}>
-                    <View style={styles.profile}>
+        <Screen style={styles.container}>
+            <View style={styles.profile}>
 
-                        <View style={styles.imgContainer}>
-                            <View style={styles.imgBorder}>
-                                <Image  source={{uri: 'https://i.pinimg.com/736x/4a/2c/92/4a2c92a52fbc45f8fefb86dbe34ad8cc.jpg'}} style={styles.image}/>
-                            </View>
-                        </View>
-                        
-                        <View style={styles.content}>
-                            <AppText style={styles.username}>stewie2k</AppText>
-                            <AppText style={styles.fullname}>Nguyễn Lê Tướng Quân</AppText>
-                        </View>
-                        
-                        <FlatList
-                            data={items}
-                            keyExtractor={item => item.name}
-                            renderItem={({item}) => (
-                                <Listing title={item.content} icon={item.name} style={styles.listing}/>
-                            )}
-                        />
-
+                <View style={styles.imgContainer}>
+                    <View style={styles.imgBorder}>
+                        <Image  source={{uri: 'https://i.pinimg.com/736x/4a/2c/92/4a2c92a52fbc45f8fefb86dbe34ad8cc.jpg'}} style={styles.image}/>
                     </View>
-                    <Button style={styles.button} title='Sign Out' onPress={() => setUser(null)}/>
-                </Screen>
-            )
-            : 
-            (
-                <AuthNavigator/>
-            )
+                </View>
+                
+                <View style={styles.content}>
+                    <AppText style={styles.username}>stewie2k</AppText>
+                    <AppText style={styles.fullname}>Nguyễn Lê Tướng Quân</AppText>
+                </View>
+                
+                <FlatList
+                    data={items}
+                    keyExtractor={item => item.name}
+                    renderItem={({item}) => (
+                        <Listing title={item.content} icon={item.name} style={styles.listing}/>
+                    )}
+                />
+
+            </View>
+            <Button style={styles.button} title='Sign Out' onPress={() => setUser(null)}/>
+        </Screen>
     );
 }
 
