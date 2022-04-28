@@ -13,8 +13,8 @@ public class ResourceController {
     @Autowired
     ResourceService resourceService;
 
-    @GetMapping("/{post_id}")
-    public ArrayList<Resource> getResources(@PathVariable(name = "post_id") int post_id) {
-        return resourceService.getResources(post_id);
-    }
+//    @GetMapping("/{post_id}")
+//    public ArrayList<Resource> getResources(@PathVariable(name = "post_id") int post_id) {
+//        return resourceService.getResources(post_id);
+//    }
 }

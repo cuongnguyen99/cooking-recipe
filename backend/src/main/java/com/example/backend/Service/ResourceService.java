@@ -13,7 +13,7 @@ public class ResourceService {
     private ResourceRepository resourceRepository;
 
 
-    public ArrayList<Resource> getResources(int post_id) {
-        return resourceRepository.findAllByPostID(post_id);
-    }
+//    public ArrayList<Resource> getResources(int post_id) {
+//        return resourceRepository.findAllByPostID(post_id);
+//    }
 }

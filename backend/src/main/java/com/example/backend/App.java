@@ -28,10 +28,10 @@ public class App {
 //             posts) {
 //            System.out.println(post.getPost_name());
 //        }
-        ImageRepository imageRepository = context.getBean(ImageRepository.class);
-        ArrayList<Image> images = imageRepository.findAllByPostID(1);
-        for(Image image: images) {
-            System.out.println(image.getImg_url());
-        }
+//        ImageRepository imageRepository = context.getBean(ImageRepository.class);
+//        ArrayList<Image> images = imageRepository.findAllByPostID(1);
+//        for(Image image: images) {
+//            System.out.println(image.getImg_url());
+//        }
     }
 }

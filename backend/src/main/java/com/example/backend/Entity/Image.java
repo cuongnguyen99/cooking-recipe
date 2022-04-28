@@ -15,6 +15,4 @@ public class Image {
     @Id
     private int id;
     private String img_url;
-    @Column(name = "post_id")
-    private int postID;
 }

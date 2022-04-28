@@ -16,7 +16,4 @@ public class Resource {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String description;
-    @Column(name = "post_id")
-    private int postID;
-
 }

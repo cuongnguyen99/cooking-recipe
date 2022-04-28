@@ -10,6 +10,6 @@ import java.util.ArrayList;
 @Repository
 public interface StepRepository extends JpaRepository<Step, Integer> {
 
-    ArrayList<Step> findAllByPostIDOrderByStepNumberAsc(int postID);
+//    ArrayList<Step> findAllByPostIDOrderByStepNumberAsc(int postID);
 
 }

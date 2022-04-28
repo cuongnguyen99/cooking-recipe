@@ -11,84 +11,16 @@ import Screen from './Screen';
 import Separator from '../components/Separator';
 import Carousel from 'react-native-snap-carousel';
 
-const resources = [
-    {
-        id: 1,
-        content: '1 bịch bánh tráng'
-    },
-    {
-        id: 2,
-        content: '10 quả tắc/1 quả chanh'
-    },
-    {
-        id: 3,
-        content: 'Hành khô'
-    },
-    {
-        id: 4,
-        content: '1/2 quả xoài xanh'
-    },
-    {
-        id: 5,
-        content: 'Dầu ăn, xì dầu, ớt bột, đường, hạt nêm, giấm, nước màu'
-    }
-]
-
-const steps = [
-    {
-        id: 1,
-        step: 1,
-        content: 'Bước một làm abc'
-    },
-    {
-        id: 2,
-        step: 2,
-        content: 'Bước hai làm akljsdlaksjd'
-    },
-    {
-        id: 3,
-        step: 3,
-        content: 'Bước ba làm alsjd,zmxc;lzkxc;lkz'
-    },
-    {
-        id: 4,
-        step: 4,
-        content: 'Bước bốn làm ams,dnm,.zmxc.mzx.ckzjxlkzjxckljzxlkcj'
-    },
-]
-
-const images = [
-    {
-        id: 1,
-        url: 'https://ngonaz.com/wp-content/uploads/2021/09/cach-lam-ca-vien-chien-1.jpg'
-    },
-    {
-        id: 2,
-        url: 'https://vietgle.vn/wp-content/uploads/2020/10/cach-lam-ca-vien-800x500-1.jpg'
-    },
-    {
-        id: 3,
-        url: 'https://images.foody.vn/res/g79/789094/prof/s576x330/foody-upload-api-foody-mobile-hmn-jpg-181025111824.jpg'
-    },
-    {
-        id: 4,
-        url: 'https://d1sag4ddilekf6.azureedge.net/compressed/merchants/VNGFVN000002br/hero/66a8657cb100483e906b984b50a7eaad_1571898323162358754.jpeg'
-    },
-    {
-        id: 5,
-        url: 'https://images.foody.vn/res/g104/1039545/prof/s1242x600/foody-upload-api-foody-mobile-img_2495-200731135420.jpg'
-    },
-    {
-        id: 6,
-        url: 'https://static.riviu.co/960/image/2021/03/15/79ae51891c103d12e9ebddfeafb9cc80_output.jpeg'
-    }
-]
-
 const SLIDER_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH);
 const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3/4);
 
 function DetailScreen({navigation, route}) {
+    const post = route.params.item;
+    const images = post.images;
+    const steps = post.steps;
+    const resources = post.resources;
+    const user = post.username;
 
     const onBackPress = () => {
         navigation.goBack();
@@ -106,7 +38,7 @@ function DetailScreen({navigation, route}) {
                         keyExtractor={item => item.id}
                         renderItem={({item}) => (
                             <ImageBackground
-                                source={{uri: item.url}}
+                                source={{uri: item.img_url}}
                                 style={styles.image}
                                 resizeMode='cover'
                             >
@@ -127,34 +59,41 @@ function DetailScreen({navigation, route}) {
                     <Icon name='bookmark' size={40} style={styles.favorite} color={colors.text_primary} />
                 </View>
                 <View style={styles.container}>
-                    <AppText style={styles.title} numberOfLines={2} ellipsizeMode='tail'>Cá Viên Chiên Không Dầu</AppText>
+                    <AppText style={styles.title} numberOfLines={2} ellipsizeMode='tail'>{post.post_name}</AppText>
 
                     {/* User */}
                     <View style={styles.user}>
                         <Image
                             style={styles.avatar}
-                            source= {{uri: 'https://i.pinimg.com/564x/92/d8/ca/92d8ca5bdc13b99fcb8e1a0c9084cfd3.jpg'}}
+                            source= {{uri: user.image_url}}
                         />
                         <View style={{justifyContent: 'space-evenly', marginLeft: 10}}>
-                            <AppText style={{fontWeight: '500', fontSize: 20}}>Mèo Sao Hoả</AppText>
-                            <AppText style={{fontWeight: '300', fontSize: 16}}>meocute321</AppText>
+                            <AppText style={{fontWeight: '500', fontSize: 20}}>{user.fullname}</AppText>
+                            <AppText style={{fontWeight: '300', fontSize: 16}}>{user.username}</AppText>
                         </View>
+                    </View>
+
+                    {/* Description */}
+                    <Separator style={styles.separator}/>
+                    <View style={styles.box_item}>
+                        <AppText style={styles.sub_title}>Description</AppText>
+                        <AppText>{post.description}</AppText>
                     </View>
 
                     {/* Resources */}
                     <Separator style={styles.separator}/>
                     <View style={styles.box_item}>
-                        <AppText style={styles.sub_title}>Resources</AppText>
+                        <AppText style={styles.sub_title}>Ingredients</AppText>
                         {
                             resources.map(item => {
                                 return (
-                                    <AppText style={styles.content}>+ {item.content}</AppText>
+                                    <AppText style={styles.content} key={item.id}>+ {item.description}</AppText>
                                 );
                             })
                         }
                     </View>
 
-                    {/* Resources */}
+                    {/* Steps */}
                     <Separator style={styles.separator}/>
                     <View style={styles.box_item}>
                         <AppText style={styles.sub_title}>Steps</AppText>
@@ -162,11 +101,11 @@ function DetailScreen({navigation, route}) {
                             steps.map(item => {
                                 return (
                                     <View
-                                     style={{flexDirection: 'row', marginBottom: 10, alignItems: 'center'}}
+                                     style={{flexDirection: 'row', marginBottom: 20, alignItems: 'flex-start', paddingRight: 10}}
                                      key={item.id}
                                     >
-                                        <ListingItem size={40} step={item.step} style={{marginRight: 10}}/>
-                                        <AppText style={styles.content}>{item.content}</AppText>
+                                        <ListingItem size={40} step={item.stepNumber} style={{marginRight: 10}}/>
+                                        <AppText style={styles.content}>{item.description}</AppText>
                                     </View>
                                 );
                             })
@@ -232,7 +171,8 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     content: {
-        fontSize: 20
+        fontSize: 20,
+        width: "88%"
     },
 })
 

@@ -13,8 +13,8 @@ public class ImageController {
     @Autowired
     ImageService imageService;
 
-    @GetMapping("/{post_id}")
-    public ArrayList<Image> getImages(@PathVariable(name = "post_id") int post_id) {
-        return imageService.getImages(post_id);
-    }
+//    @GetMapping("/{post_id}")
+//    public ArrayList<Image> getImages(@PathVariable(name = "post_id") int post_id) {
+//        return imageService.getImages(post_id);
+//    }
 }

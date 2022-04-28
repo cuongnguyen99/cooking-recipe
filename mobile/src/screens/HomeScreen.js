@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {FlatList, ScrollView, StyleSheet, View} from 'react-native';
 
 import AppText from '../components/AppText';
@@ -6,6 +6,8 @@ import Category from '../components/Category';
 import HeaderNavigate from '../components/HeaderNavigate';
 import NewFood from '../components/NewFood';
 import Screen from './Screen';
+
+import category from '../ultility/api/category';
 
 const data = [
     {
@@ -44,38 +46,33 @@ const data = [
         userURL: 'https://i.ex-cdn.com/phatgiao.org.vn/files/content/2019/04/02/banh1024x626_1-1750.jpg',
         foodURL: 'https://meta.vn/Data/image/2020/11/20/banh-trang-tron-5.jpg'
     },
-]
-
-const categories = [
-    {
-        id: 1,
-        title: 'Main course',
-        imgUrl: 'https://food.fnr.sndimg.com/content/dam/images/food/fullset/2013/11/25/0/FNK_pan-seared-salmon-with-kale-apple-salad_s4x3.jpg.rend.hgtvcom.616.462.suffix/1387918756116.jpeg',
-    },
-    {
-        id: 2,
-        title: 'Side dish',
-        imgUrl: 'https://assets.epicurious.com/photos/5ad78633b24afe5122e72b5b/master/pass/blistered-asparagus-recipe-BA-041818.jpg',
-    },
-    {
-        id: 3,
-        title: 'Savory Food',
-        imgUrl: 'https://static.onecms.io/wp-content/uploads/sites/9/2013/09/apple-ham-quiche-FT-RECIPE0919.jpg',
-    },
-    {
-        id: 4,
-        title: 'Dessert',
-        imgUrl: 'https://img.taste.com.au/xi2t8DpL/taste/2016/11/lemon-panna-cotta-with-vodka-blueberry-syrup-92005-1.jpeg',
-    },
-]
+];
 
 function HomeScreen({navigation, route}) {
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        handleGetCategory();
+    }, []);
+
+    const handleGetCategory = async () => {
+        const result = await category.getCategory();
+
+        if(!result.ok) {
+            console.log("Error when reder category!");
+            return;
+        }
+
+        const data = result.data;
+        setCategories(data);
+    }
+
     const newArivalPress = () => {
         console.log('New Food!');
     }
 
-    const handleCategoryPress = () => {
-        navigation.navigate('FoodList');
+    const handleCategoryPress = (categoryID) => {
+        navigation.navigate('FoodList', {categoryID: categoryID});
     }
 
     return (
@@ -114,14 +111,14 @@ function HomeScreen({navigation, route}) {
                 {categories.map(item => (
                     <View key={item.id}>
                         <HeaderNavigate
-                                    title={item.title}
+                                    title={item.category_name}
                                     style={styles.categoryHeader}
-                                    onPress={handleCategoryPress}
+                                    onPress={() => handleCategoryPress(item.id)}
                         />
                         <Category
-                            title={item.title}
-                            image={item.imgUrl}
-                            onPress={handleCategoryPress}
+                            title={item.category_name}
+                            image={item.img_url}
+                            onPress={() => handleCategoryPress(item.id)}
                         />
                         <View style={styles.categoryFooter} />
                     </View>

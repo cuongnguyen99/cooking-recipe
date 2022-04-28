@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Collection;
 
 @Data
 @NoArgsConstructor
@@ -18,5 +19,4 @@ public class User implements Serializable {
     private String password;
     private String fullname;
     private String image_url;
-
 }

@@ -18,6 +18,4 @@ public class Step {
     @Column(name = "step_number")
     private int stepNumber;
     private String description;
-    @Column(name = "post_id")
-    private int postID;
 }

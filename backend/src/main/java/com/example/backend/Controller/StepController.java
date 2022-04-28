@@ -13,8 +13,8 @@ public class StepController {
     @Autowired
     StepService stepService;
 
-    @GetMapping("/{post_id}")
-    public ArrayList<Step> getSteps(@PathVariable(name = "post_id") int post_id) {
-        return stepService.getSteps(post_id);
-    }
+//    @GetMapping("/{post_id}")
+//    public ArrayList<Step> getSteps(@PathVariable(name = "post_id") int post_id) {
+//        return stepService.getSteps(post_id);
+//    }
 }

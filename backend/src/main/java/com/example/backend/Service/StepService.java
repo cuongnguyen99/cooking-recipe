@@ -12,7 +12,7 @@ public class StepService {
     @Autowired
     private StepRepository stepRepository;
 
-    public ArrayList<Step> getSteps(int post_id) {
-        return stepRepository.findAllByPostIDOrderByStepNumberAsc(post_id);
-    }
+//    public ArrayList<Step> getSteps(int post_id) {
+//        return stepRepository.findAllByPostIDOrderByStepNumberAsc(post_id);
+//    }
 }

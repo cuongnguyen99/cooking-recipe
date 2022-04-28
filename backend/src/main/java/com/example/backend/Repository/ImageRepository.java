@@ -11,8 +11,8 @@ import java.util.ArrayList;
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Integer> {
 
-    @Query(value = "select * from images join posts on images.post_id = posts.id where " +
-            "post_id = :postID", nativeQuery = true)
-    ArrayList<Image> findAllByPostID(@Param("postID") int postID);
+//    @Query(value = "select * from images join posts on images.post_id = posts.id where " +
+//            "post_id = :postID", nativeQuery = true)
+//    ArrayList<Image> findAllByPostID(@Param("postID") int postID);
 
 }

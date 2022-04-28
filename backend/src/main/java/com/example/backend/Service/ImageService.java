@@ -12,7 +12,7 @@ public class ImageService {
     @Autowired
     private ImageRepository imageRepository;
 
-    public ArrayList<Image> getImages(int post_id) {
-        return imageRepository.findAllByPostID(post_id);
-    }
+//    public ArrayList<Image> getImages(int post_id) {
+//        return imageRepository.findAllByPostID(post_id);
+//    }
 }

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @Repository
 public interface ResourceRepository extends JpaRepository<Resource, Integer> {
 
-    @Query(value = "select * from resources join posts on resources.post_id = posts.id where post_id = :postID", nativeQuery = true)
-    ArrayList<Resource> findAllByPostID(@Param("postID") int postID);
+//    @Query(value = "select * from resources join posts on resources.post_id = posts.id where post_id = :postID", nativeQuery = true)
+//    ArrayList<Resource> findAllByPostID(@Param("postID") int postID);
 
 }
