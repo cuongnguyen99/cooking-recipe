@@ -81,7 +81,8 @@ function DetailScreen({navigation, route}) {
                     </View>
 
                     {/* Resources */}
-                    <Separator style={styles.separator}/>
+                    {/* <Separator style={styles.separator}/> */}
+                    <Separator style={styles.separator} />
                     <View style={styles.box_item}>
                         <AppText style={styles.sub_title}>Ingredients</AppText>
                         {
@@ -160,7 +161,7 @@ const styles = StyleSheet.create({
     },
     separator: {
         marginTop: 20,
-        marginBottom: 30
+        marginBottom: 30,
     },
     box_item: {
         

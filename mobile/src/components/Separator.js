@@ -7,7 +7,7 @@ function Separator({style}) {
         <View
             style={[{
                 backgroundColor: colors.separator,
-                height: 2,
+                height: 1,
                 width: '100%'
             }, style]}
         />
