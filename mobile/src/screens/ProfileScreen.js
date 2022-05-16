@@ -31,7 +31,7 @@ function ProfileScreen({navigation, route}) {
 
                 <View style={styles.imgContainer}>
                     <View style={styles.imgBorder}>
-                        <Image  source={{uri: 'https://i.pinimg.com/736x/4a/2c/92/4a2c92a52fbc45f8fefb86dbe34ad8cc.jpg'}} style={styles.image}/>
+                        <Image  source={{uri: 'https://www.seekpng.com/png/detail/46-462910_person-icon-black-avatar-png.png'}} style={styles.image}/>
                     </View>
                 </View>
                 

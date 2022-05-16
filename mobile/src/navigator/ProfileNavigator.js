@@ -11,11 +11,11 @@ const ProfileStack = createNativeStackNavigator();
 function ProfileNavigator({navigation, route}) {
     const [user, setUser] = useState(null);
 
-    useEffect(() => {
-        if(!user) {
-            navigation.replace('Auth');
-        }
-    }, [])
+    // useEffect(() => {
+    //     if(!user) {
+    //         navigation.replace('Auth');
+    //     }
+    // }, [])
 
     return (
         <ProfileStack.Navigator

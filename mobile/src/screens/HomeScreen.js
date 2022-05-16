@@ -9,45 +9,6 @@ import Screen from './Screen';
 
 import category from '../ultility/api/category';
 
-const data = [
-    {
-        id: 1,
-        title: 'Bánh tráng trộn đà nẵng',
-        userURL: 'https://i.ex-cdn.com/phatgiao.org.vn/files/content/2019/04/02/banh1024x626_1-1750.jpg',
-        foodURL: 'https://meta.vn/Data/image/2020/11/20/banh-trang-tron-5.jpg'
-    },
-    {
-        id: 2,
-        title: 'Bánh tráng trộn',
-        userURL: 'https://i.ex-cdn.com/phatgiao.org.vn/files/content/2019/04/02/banh1024x626_1-1750.jpg',
-        foodURL: 'https://meta.vn/Data/image/2020/11/20/banh-trang-tron-5.jpg'
-    },
-    {
-        id: 3,
-        title: 'Bánh tráng trộn',
-        userURL: 'https://i.ex-cdn.com/phatgiao.org.vn/files/content/2019/04/02/banh1024x626_1-1750.jpg',
-        foodURL: 'https://meta.vn/Data/image/2020/11/20/banh-trang-tron-5.jpg'
-    },
-    {
-        id: 4,
-        title: 'Bánh tráng trộn',
-        userURL: 'https://i.ex-cdn.com/phatgiao.org.vn/files/content/2019/04/02/banh1024x626_1-1750.jpg',
-        foodURL: 'https://meta.vn/Data/image/2020/11/20/banh-trang-tron-5.jpg'
-    },
-    {
-        id: 5,
-        title: 'Bánh tráng trộn',
-        userURL: 'https://i.ex-cdn.com/phatgiao.org.vn/files/content/2019/04/02/banh1024x626_1-1750.jpg',
-        foodURL: 'https://meta.vn/Data/image/2020/11/20/banh-trang-tron-5.jpg'
-    },
-    {
-        id: 6,
-        title: 'Bánh tráng trộn',
-        userURL: 'https://i.ex-cdn.com/phatgiao.org.vn/files/content/2019/04/02/banh1024x626_1-1750.jpg',
-        foodURL: 'https://meta.vn/Data/image/2020/11/20/banh-trang-tron-5.jpg'
-    },
-];
-
 function HomeScreen({navigation, route}) {
     const [categories, setCategories] = useState([]);
 
@@ -90,7 +51,7 @@ function HomeScreen({navigation, route}) {
                 />
 
                 {/* New Food */}
-                <FlatList
+                {/* <FlatList
                     data={data}
                     keyExtractor={item => item.id}
                     horizontal
@@ -105,7 +66,7 @@ function HomeScreen({navigation, route}) {
                             <View style={styles.categoryFooter}></View>
                         </>
                     )}
-                />
+                /> */}
 
                 {/* List Categories */}
                 {categories.map(item => (

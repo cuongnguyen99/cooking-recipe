@@ -10,9 +10,9 @@ function Category({image, title, onPress}) {
             <ImageBackground resizeMode='cover' source={{uri: image}} style={styles.image}>
                 <View style={styles.layout}>
                 </View>
-                <AppText style={styles.title} numberOfLines={1} ellipsizeMode='tail'>{title}</AppText>
+                {/* <AppText style={styles.title} numberOfLines={1} ellipsizeMode='tail'>{title}</AppText> */}
                 <View style={styles.subtitleContainer}>
-                    <AppText style={styles.subtitle}>Tìm hiểu thêm</AppText>
+                    <AppText style={styles.subtitle}>More Information</AppText>
                     <Icon name='chevron-right' size={20} color={colors.text_primary} />
                 </View>
             </ImageBackground>
