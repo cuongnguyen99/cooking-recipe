@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Data
@@ -20,6 +21,7 @@ public class Post {
     private String description;
     @Column(name = "category_id")
     private int categoryID;
+    @Column(name = "time_created")
     private String time;
 
     @ManyToOne
@@ -28,13 +30,13 @@ public class Post {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
-    private Collection<Image> images;
+    private Collection<Image> images = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
-    private Collection<Step> steps;
+    private Collection<Step> steps = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
-    private Collection<Resource> resources;
+    private Collection<Resource> resources = new ArrayList<>();
 }

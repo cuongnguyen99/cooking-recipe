@@ -1,6 +1,7 @@
 package com.example.backend;
 
 import com.example.backend.Entity.*;
+import com.example.backend.Service.PostService;
 import com.example.backend.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -25,10 +26,14 @@ public class App{
     }
 
 //    @Bean
-//    CommandLineRunner run(UserService userService) {
+//    CommandLineRunner run(PostService postService) {
 //        return args -> {
-//            userService.saveUser(new User("cuong1234", "123456", "Cuong", "abc", new ArrayList<>()));
-//            userService.addRoleToUser("cuong123", "ROLE_USER");
+//            ArrayList<Post> posts = postService.getPostByTime();
+//            for (Post post:
+//                 posts) {
+//                System.out.println(post.getPost_name());
+//            }
+//            System.out.println();
 //        };
 //    }
 }

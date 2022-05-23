@@ -26,6 +26,9 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
+    @GetMapping("/user/infor")
+    public ResponseEntity<User> getUser(@RequestParam String username) { return ResponseEntity.ok().body(userService.getUser(username)); }
+
     @PostMapping("/user/save")
     public ResponseEntity<User> saveUser(@RequestBody User user) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
@@ -51,6 +54,20 @@ public class UserController {
         userService.addRoleToUser(form.getUsername(), form.getRoleName());
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/user/addfavorite")
+    public ResponseEntity<?> addFavoriteList(@RequestParam String username, @RequestParam int postID) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/addfavorite").toUriString());
+
+        return ResponseEntity.created(uri).body(userService.addFavoriteList(username, postID));
+    }
+
+    @DeleteMapping("/user/removefavorite")
+    public ResponseEntity<?> removeFavoriteList(@RequestParam String username, @RequestParam int postID) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/addfavorite").toUriString());
+
+        return ResponseEntity.created(uri).body(userService.removeFavoriteList(username, postID));
     }
 
     @Data

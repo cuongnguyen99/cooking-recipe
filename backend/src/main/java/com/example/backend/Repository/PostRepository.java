@@ -17,4 +17,10 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     //Find post by id
     @Query(value = "select * from posts where posts.id = :id", nativeQuery = true)
     Post findById(@Param("id") int id);
+
+    @Query(value = "select * from posts where posts.post_name like %:name%", nativeQuery = true)
+    ArrayList<Post> findPostByName(@Param("name") String post_name);
+
+    @Query(value = "select * from posts order by posts.time_created desc limit 0,10", nativeQuery = true)
+    ArrayList<Post> findPostByTime();
 }

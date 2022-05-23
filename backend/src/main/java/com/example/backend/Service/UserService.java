@@ -1,7 +1,9 @@
 package com.example.backend.Service;
 
+import com.example.backend.Entity.Post;
 import com.example.backend.Entity.Role;
 import com.example.backend.Entity.User;
+import com.example.backend.Repository.PostRepository;
 import com.example.backend.Repository.RoleRepository;
 import com.example.backend.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import java.util.Collection;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PostRepository postRepository;
 //    private final PasswordEncoder passwordEncoder;
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -80,6 +83,22 @@ public class UserService implements UserDetailsService {
         Role role = roleRepository.findByRolename(roleName);
 
         user.getRoles().add(role);
+    }
+
+    public User addFavoriteList(String username, int postID) {
+        User user = userRepository.findByUsername(username);
+        Post post = postRepository.findById(postID);
+        user.getPost().add(post);
+
+        return user;
+    }
+
+    public User removeFavoriteList(String username, int postID) {
+        User user = userRepository.findByUsername(username);
+        Post post = postRepository.findById(postID);
+        user.getPost().remove(post);
+
+        return user;
     }
 
 }

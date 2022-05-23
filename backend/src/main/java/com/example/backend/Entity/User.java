@@ -23,4 +23,11 @@ public class User implements Serializable {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "user_post",
+        joinColumns = @JoinColumn(name = "username"),
+            inverseJoinColumns = @JoinColumn(name = "post_id")
+    )
+    private Collection<Post> post = new ArrayList<>();
 }
