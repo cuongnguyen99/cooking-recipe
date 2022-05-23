@@ -1,26 +1,82 @@
-import React from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { Dimensions, Image, ImageBackground, ScrollView, StyleSheet, View } from 'react-native';
 import {animatedStyles, scrollInterpolator} from '../utils/animations';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Toast from 'react-native-simple-toast';
 
 import AppText from '../components/AppText';
 import ListingItem from '../components/ListingItem';
 import colors from '../styles/colors';
+import userAPI from '../ultility/api/user';
 
 import Screen from './Screen';
 import Separator from '../components/Separator';
 import Carousel from 'react-native-snap-carousel';
+import AuthContext from '../ultility/context';
 
 const SLIDER_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH);
 const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3/4);
 
 function DetailScreen({navigation, route}) {
+    const {user, accessToken} = useContext(AuthContext);
+    const auth = useContext(AuthContext);
     const post = route.params.item;
     const images = post.images;
     const steps = post.steps;
     const resources = post.resources;
-    const user = post.username;
+    const [save, setSave] = useState(false);
+
+    useEffect(() => {
+        checkFavoriteList();
+    }, [])
+
+    const checkFavoriteList = () => {
+        if(user) {
+            const favorList = user.post;
+            if(favorList){
+                let checkSave = favorList.some((item) => {
+                    return item.id == post.id;
+                });
+                console.log(checkSave);
+                if(checkSave) {
+                    return setSave(true);
+                }
+                return setSave(false);
+            }
+        }
+
+    }
+
+    const handleSaveFavorite = async () => {
+        if(user) {
+            if(save) {
+                const newUser = user.post.filter((item) => item.id != post.id);
+                const result = await userAPI.removeFavorite(user.username, post.id, accessToken);
+                if(!result.ok) {
+                    return console.error("Fail");
+                }
+                auth.setUser(newUser);
+                setSave(false);
+                Toast.showWithGravity("Remove recipe successfully!", Toast.LONG, Toast.BOTTOM);
+            }
+            else if (!save) {
+                const newUser = user;
+                const temp = [...user.post];
+                newUser.post = [...temp, post];
+                const result = await userAPI.addFavorite(user.username, post.id, accessToken);
+                if(!result.ok) {
+                    return console.error("Fail");
+                }
+                auth.setUser(newUser);
+                setSave(true);
+                Toast.showWithGravity("Add recipe to favorite list successfully!", Toast.LONG, Toast.BOTTOM);
+            }
+        }
+        else {
+            return Toast.showWithGravity("You need to Sign In to use this feature!", Toast.LONG, Toast.BOTTOM);
+        }
+    }
 
     const onBackPress = () => {
         navigation.goBack();
@@ -56,7 +112,7 @@ function DetailScreen({navigation, route}) {
                     <ListingItem name='arrow-left' size={40} backgroundColor={colors.box_item} contentColor={colors.secondary} style={styles.backButton} 
                                     onPress={onBackPress}
                     />
-                    <Icon name='bookmark' size={40} style={styles.favorite} color={colors.text_primary} />
+                    <Icon name='bookmark' size={40} style={styles.favorite} color={save ?colors.primary : colors.text_primary} onPress={handleSaveFavorite}/>
                 </View>
                 <View style={styles.container}>
                     <AppText style={styles.title} numberOfLines={2} ellipsizeMode='tail'>{post.post_name}</AppText>
@@ -65,11 +121,11 @@ function DetailScreen({navigation, route}) {
                     <View style={styles.user}>
                         <Image
                             style={styles.avatar}
-                            source= {{uri: user.image_url}}
+                            source= {{uri: post.username.image_url}}
                         />
                         <View style={{justifyContent: 'space-evenly', marginLeft: 10}}>
-                            <AppText style={{fontWeight: '500', fontSize: 20}}>{user.fullname}</AppText>
-                            <AppText style={{fontWeight: '300', fontSize: 16}}>{user.username}</AppText>
+                            <AppText style={{fontWeight: '500', fontSize: 20}}>{post.username.fullname}</AppText>
+                            <AppText style={{fontWeight: '300', fontSize: 16}}>{post.username.username}</AppText>
                         </View>
                     </View>
 

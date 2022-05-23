@@ -36,4 +36,20 @@ const signup = (username, password, fullname, onUploadProgress) => {
     );
 } 
 
-export default {login, signup};
+const getUser = (username, access_token) => {
+    return api.get("user/infor?username=" + username, {}, {headers: {Authorization: "Bearer " + access_token}});
+}
+
+const addFavorite = (username, postID, access_token) => {
+    return api.post("user/addfavorite?username="+ username + "&postID=" +postID, {}, {
+        headers: {Authorization: "Bearer "+ access_token}
+    });
+}
+
+const removeFavorite = (username, postID, access_token) => {
+    return api.delete("user/removefavorite?username="+ username + "&postID=" +postID, {}, {
+        headers: {Authorization: "Bearer "+ access_token}
+    });
+}
+
+export default {login, signup, getUser, addFavorite, removeFavorite};

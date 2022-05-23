@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, StyleSheet, Image, FlatList } from 'react-native';
 import AppText from '../components/AppText';
 import Button from '../components/Button';
 import Listing from '../components/Listing';
 import AuthNavigator from '../navigator/AuthNavigator';
 import colors from '../styles/colors';
+import AuthContext from '../ultility/context';
 import Screen from './Screen';
 
 const items = [
@@ -23,7 +24,18 @@ const items = [
 ];
 
 function ProfileScreen({navigation, route}) {
-    const [user, setUser] = useState(null);
+    const {user, accessToken, setUser}= useContext(AuthContext);
+
+    useEffect(() => {
+        if(!user) {
+            navigation.replace("Auth");
+        }
+    }, []);
+
+    const handleSignOut = () => {
+        setUser(null);
+        navigation.replace("App");
+    }
 
     return (
         <Screen style={styles.container}>
@@ -31,13 +43,13 @@ function ProfileScreen({navigation, route}) {
 
                 <View style={styles.imgContainer}>
                     <View style={styles.imgBorder}>
-                        <Image  source={{uri: 'https://www.seekpng.com/png/detail/46-462910_person-icon-black-avatar-png.png'}} style={styles.image}/>
+                        <Image  source={{uri: user?.image_url}} style={styles.image}/>
                     </View>
                 </View>
                 
                 <View style={styles.content}>
-                    <AppText style={styles.username}>stewie2k</AppText>
-                    <AppText style={styles.fullname}>Nguyễn Lê Tướng Quân</AppText>
+                    <AppText style={styles.username}>{user.username}</AppText>
+                    <AppText style={styles.fullname}>{user.fullname}</AppText>
                 </View>
                 
                 <FlatList
@@ -49,7 +61,7 @@ function ProfileScreen({navigation, route}) {
                 />
 
             </View>
-            <Button style={styles.button} title='Sign Out' onPress={() => setUser(null)}/>
+            <Button style={styles.button} title='Sign Out' onPress={handleSignOut}/>
         </Screen>
     );
 }

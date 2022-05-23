@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { FlatList, View, StyleSheet, ScrollView } from 'react-native';
 import AppText from '../components/AppText';
 import HorPost from '../components/HorPost';
+import AuthContext from '../ultility/context';
 import Screen from './Screen';
 
 const data = [
@@ -64,6 +65,8 @@ const data = [
 ]
 
 function SaveScreen({navigation, route}) {
+    const {user, accessToken} = useContext(AuthContext);
+
     return (
         <Screen>
             <ScrollView showsVerticalScrollIndicator={false}>

@@ -4,10 +4,11 @@ import Screen from '../screens/Screen';
 
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SearchScreen from '../screens/SearchScreen';
+import DetailScreen from '../screens/DetailScreen';
 
 const SearchStack = createNativeStackNavigator();
 
-function SearchNavigator(props) {
+function SearchNavigator({navigation, route}) {
     return (
         <SearchStack.Navigator
             screenOptions={{
@@ -17,6 +18,10 @@ function SearchNavigator(props) {
             <SearchStack.Screen
                 name='Search'
                 component={SearchScreen}
+            />
+            <SearchStack.Screen
+                name='Detail'
+                component={DetailScreen}
             />
         </SearchStack.Navigator>
     );

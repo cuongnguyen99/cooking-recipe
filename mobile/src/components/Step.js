@@ -7,7 +7,7 @@ import ListingItem from './ListingItem';
 import colors from '../styles/colors';
 
 
-function Step({item, index, onChangeText, onRemoveStep}) {
+function Step({value, item, index, onChangeText, onRemoveStep}) {
 
     if(index >= 1) {
         return (
@@ -17,7 +17,7 @@ function Step({item, index, onChangeText, onRemoveStep}) {
             >
                 <ListingItem step={item.step_number} size={50} contentColor={colors.secondary} backgroundColor={colors.box_item}/>
                 <AppInput title='Enter this step' style={{width: '78%', marginLeft: 5}}
-                    value={item.step}
+                    value={value}
                     onChangeText={onChangeText}
                 />
                 <TouchableHighlight onPress={onRemoveStep} underlayColor={colors.buttonDisable} style={{borderRadius: 10}}>
@@ -34,7 +34,7 @@ function Step({item, index, onChangeText, onRemoveStep}) {
             >
                 <ListingItem step={item.step_number} size={50} contentColor={colors.secondary} backgroundColor={colors.box_item}/>
                 <AppInput title='Enter this step' style={{width: '85%'}}
-                    value={item.step}
+                    value={value}
                     onChangeText={onChangeText}
                 />
         </View>

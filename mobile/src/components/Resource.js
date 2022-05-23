@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import colors from '../styles/colors';
 import AppInput from './AppInput';
 
-function Resource({item, index, onChangeText, onRemoveResource}) {
+function Resource({value, index, onChangeText, onRemoveResource}) {
     if(index >= 1) {
         return (
             <View
@@ -12,7 +12,7 @@ function Resource({item, index, onChangeText, onRemoveResource}) {
                 key={index}
                 >
                 <AppInput title='Enter this resource' style={{width: '90%'}}
-                    value={item.resource}
+                    value={value}
                     onChangeText={onChangeText}
                 />
                 <TouchableHighlight onPress={onRemoveResource} underlayColor={colors.buttonDisable} style={{borderRadius: 10}}>
@@ -28,7 +28,7 @@ function Resource({item, index, onChangeText, onRemoveResource}) {
             key={index}
         >
             <AppInput title='Enter this resource' style={{width: '100%'}}
-                value={item.resource}
+                value={value}
                 onChangeText={onChangeText}
             />
         </View>

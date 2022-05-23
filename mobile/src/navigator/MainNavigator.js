@@ -21,7 +21,7 @@ function MainNavigator({navigation, route}) {
             <Stack.Screen
                 name='Auth'
                 component={AuthNavigator}
-                />
+            />
         </Stack.Navigator>
     );
 }

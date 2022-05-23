@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {Image, ImageBackground, Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
+import SelectDropdown from 'react-native-select-dropdown';
 
 import colors from '../styles/colors';
 import Screen from './Screen';
@@ -12,34 +13,59 @@ import Button from '../components/Button';
 
 import Resource from '../components/Resource';
 import Step from '../components/Step';
+import AuthContext from '../ultility/context';
+import categoriesApi from '../ultility/api/category';
+
+const countries = ["Egypt", "Canada", "Australia", "Ireland"];
 
 function AddScreen({navigation, route}) {
+    const {user, accessToken} = useContext(AuthContext);
     const [desHeight, setDesHeight] = useState(30);
     const [disable, setDisable] = useState(true);
     const [title, setTitle] = useState('');
     const [des, setDes] = useState('');
+    const [category, setCategory] = useState();
+    const [categories, setCategories] = useState([]);
     const [resources, setResources] = useState([
         {
             description: '',
-            post_id: '',
         },
     ]);
     const [steps, setSteps] = useState([
         {
             step_number: 1,
             description: '',
-            post_id: '',
         },
     ]);
 
+    useEffect( () => {
+        getCategories();
+    }, []);
+
     useEffect(() => {
-        if( resources && steps && des && title ) {
-            setDisable(false);
+        if( des && title && category) {
+            let checkResource = resources.every((item) => {
+                return item.description !== "";
+            })
+            let checkStep = steps.every((item) => {
+                return item.description !== "";
+            })
+            if(checkResource && checkStep) {
+                setDisable(false);
+            }
+            else {
+                setDisable(true);
+            }
         }
-        else {
-            setDisable(true);
+    }, [steps, resources, des, title, category]);
+
+    const getCategories = async () => {
+        const result = await categoriesApi.getCategory();
+        if(!result.ok) {
+            return console.log("Error when getting categories!");
         }
-    }, [steps, resources, des, title]);
+        setCategories(result.data);
+    }
 
     const handleImage = () => {
         console.log('Image click');
@@ -49,7 +75,6 @@ function AddScreen({navigation, route}) {
         let newArr = resources;
         let item = {
             description: '',
-            post_id: '',
         };
         newArr = [...newArr, item];
         setResources(newArr);
@@ -60,7 +85,6 @@ function AddScreen({navigation, route}) {
         let item = {
             step_number: newArr[newArr.length - 1].step_number + 1,
             description: '',
-            post_id: '',
         };
         newArr = [...newArr, item];
         setSteps(newArr);
@@ -92,13 +116,23 @@ function AddScreen({navigation, route}) {
         });
         setSteps(tempt);
     }
-
-    const handleStepChange = (text) => {
+    
+    const handleResourceChange = (text, item, index) => {
+        const newResource = [...resources];
+        newResource[index] = {...item};
+        newResource[index].description = text;
         
+        setResources(newResource);
+        console.log(resources);
     }
 
-    const handleResourceChange = (text) => {
-        
+    const handleStepChange = (text, item, index) => {
+        const newStep = [...steps];
+        newStep[index] = {...item};
+        newStep[index].description = text;
+
+        setSteps(newStep);
+        console.log(newStep);
     }
 
     return (
@@ -126,12 +160,26 @@ function AddScreen({navigation, route}) {
 
                 {/* About Food */}
                 <View style={styles.aboutFood} >
-                    <AppInput title='Food name' style={styles.input} value={title} onChangeText={text => setTitle(text)}/>
-                    <AppInput title='Description about your food'
+                    <AppInput title='Dish name' style={styles.input} value={title} onChangeText={text => setTitle(text)}/>
+                    <AppInput title='Description about your dish'
                         value={des}
                         onChangeText={text => setDes(text)}
                         style={[styles.input, {height: 100}]} multiline={true}
                     />
+                    <SelectDropdown
+                        data={categories}
+                        defaultButtonText="Select category"
+                        buttonStyle={styles.picker}
+                        buttonTextStyle={styles.picker_text}
+                        onSelect={(selectedItem, index) => setCategory(selectedItem)}
+                        buttonTextAfterSelection = {(selectedItem, index) => {
+                            return selectedItem.category_name;
+                        }}
+                        rowTextForSelection={(item, index) => {
+                            return item.category_name;
+                        }}
+                    />
+
                 </View>
 
                 {/* Resources */}
@@ -144,10 +192,11 @@ function AddScreen({navigation, route}) {
                         resources.map((item, index) => {
                             return(
                                 <Resource
-                                    item={item}
                                     index={index}
                                     key={index}
                                     onRemoveResource={() => handleRemoveResource(item, index)}
+                                    onChangeText={(text) => handleResourceChange(text, item, index)}
+                                    value={item.description}
                                 />
                             );
                         })
@@ -170,10 +219,12 @@ function AddScreen({navigation, route}) {
                         steps.map((item, index) => {
                             return (
                                 <Step
+                                    value={item.description}
                                     item={item}
                                     index={index}
                                     key={index}
                                     onRemoveStep={() => handleRemoveStep(item, index)}
+                                    onChangeText={(text) => handleStepChange(text, item, index)}
                                 />
                             );
                         })
@@ -265,6 +316,19 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontSize: 24,
         marginBottom: 20
+    },
+    picker: {
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: colors.buttonDisable,
+        width: "100%",
+        marginTop: 15,
+    },
+    picker_text: {
+        color: colors.text_secondary,
+        textAlign: 'left',
+        marginLeft: 0,
+        fontSize: 16
     }
 })
 

@@ -8,28 +8,26 @@ import HorPost from '../components/HorPost';
 
 import Icon from 'react-native-vector-icons/Feather';
 
+import foodAPI from '../ultility/api/food';
+
 function SearchScreen({navigation, route}) {
     const [input, setInput] = useState('');
-    const [product, setProduct] = useState([]);
     const [filter, setFilter] = useState([]);
 
-
-
-    useEffect(() => {
-        if(input) {
-            const list = product.filter((item) => {
-                const itemData = item.title ? item.title.toUpperCase() : ''.toUpperCase();
-                
-                const textData = input.toUpperCase();
-
-                return itemData.indexOf(textData) > -1;
-            });
-            setFilter(list);
+    const searchFood = async () => {
+        const result = await foodAPI.getFoodByName(input);
+        if(!result.ok) {
+            console.error("Searching error!");
+            return;
         }
-        else {
-            setFilter(product)
-        }
-    }, [input])
+        const data = result.data;
+        console.log(data);
+        setFilter(data);
+    }
+
+    const handleClickOnFood = (item) => {
+        navigation.navigate('Detail', {item: item});
+    }
 
     return (
         <Screen>
@@ -42,7 +40,7 @@ function SearchScreen({navigation, route}) {
                         value= {input}
                         onChangeText= {(text) => setInput(text)}
                     />
-                    <ListingItem name='search' size={50} contentColor={colors.primary}  backgroundColor={colors.box_item}/>
+                    <ListingItem name='search' size={50} contentColor={colors.primary}  backgroundColor={colors.box_item} onPress={searchFood}/>
                 </View>
                 <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
                     {
@@ -50,11 +48,12 @@ function SearchScreen({navigation, route}) {
                             return (
                                 <View style={styles.item} key={item.id}>
                                     <HorPost
-                                        title={item.title}
-                                        mainImg={item.mainImg}
+                                        title={item.post_name}
+                                        mainImg={item.images[0].img_url}
                                         description={item.description}
-                                        userImg={item.userImg}
-                                        username={item.username}
+                                        userImg={item.username.image_url}
+                                        username={item.username.username}
+                                        onPress={() => handleClickOnFood(item)}
                                     />
                                 </View>
                             );

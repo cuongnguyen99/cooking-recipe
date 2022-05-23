@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Image, View, StyleSheet, TouchableOpacity, TouchableHighlight, KeyboardAvoidingView } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useValidation } from 'react-native-form-validator';
+import jwtDecode from 'jwt-decode';
 
 import AppInput from '../components/AppInput';
 import AppText from '../components/AppText';
@@ -10,8 +11,11 @@ import Screen from './Screen';
 
 import colors from '../styles/colors';
 import userApi from '../ultility/api/user';
+import user from '../ultility/api/user';
+import AuthContext from '../ultility/context';
 
 function LoginScreen({navigation, route}) {
+    const auth = useContext(AuthContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     
@@ -34,7 +38,16 @@ function LoginScreen({navigation, route}) {
             if(!result.ok) {
                 return console.log("login fail!");
             }
-            console.log("Data: ", result.data);
+            const access_token = result.data.access_token;
+            const userInfor = jwtDecode(result.data.access_token);
+            const userData = await userApi.getUser(userInfor.sub, access_token);
+            if(!userData.ok) {
+                return console.error("Error when login!");
+            }
+            const user = userData.data;
+            auth.setAccessToken(access_token);
+            auth.setUser(user);
+            navigation.replace("App");
         }
     }
 
@@ -60,12 +73,12 @@ function LoginScreen({navigation, route}) {
                     resizeMode='contain'
                 />
                 <View style={styles.inputContainer}>
-                    <AppInput title='Username' style={styles.input} value={username} onChangeText={text => setUsername(text)}/>
+                    <AppInput title='Username' style={styles.input} value={username} onChangeText={text => setUsername(text)} onBlur={() => validate({username: {required: true}})}/>
                     {isFieldInError("username") && getErrorsInField("username").map(errMessage => (
                         <AppText style={styles.error}>{errMessage}</AppText>
                     ))}
 
-                    <AppInput title='Password' style={styles.input} value={password} secureTextEntry onChangeText={text => setPassword(text)}/>
+                    <AppInput title='Password' style={styles.input} value={password} secureTextEntry onChangeText={text => setPassword(text)} onBlur={() => validate({password: {required: true}})}/>
                     {isFieldInError("password") && getErrorsInField("password").map(errMessage => (
                         <AppText style={styles.error}>{errMessage}</AppText>
                     ))}

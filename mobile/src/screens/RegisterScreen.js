@@ -23,16 +23,6 @@ function RegisterScreen({navigation, route}) {
     const { validate, isFieldInError, getErrorsInField, getErrorMessages } = 
         useValidation({state: {username, password, fullname, confirm}});
 
-    const _onPressButton = () => {
-        const valid = validate({
-            username: {minlength: 8, maxlength: 20, required: true},
-            password: {minlength: 6, required: true},
-            fullname: {required: true},
-            confirm: {equalPassword: password},
-        });
-        console.log(valid);
-    }
-
     const handleBack = () => {
         navigation.replace('App');
     }
@@ -84,29 +74,29 @@ function RegisterScreen({navigation, route}) {
                     resizeMode='contain'
                 />
                 <View style={styles.inputContainer}>
-                    <AppInput title='Fullname' style={styles.input} onChangeText={text => setFullname(text)}/>
+                    <AppInput title='Fullname' style={styles.input} onChangeText={text => setFullname(text)} onBlur={() => validate({fullname: {required: true}})}/>
                     {isFieldInError("fullname") && getErrorsInField("fullname").map(errMessage => (
                         <AppText style={styles.error}>{errMessage}</AppText>
                     ))}
 
-                    <AppInput title='Username' style={styles.input} onChangeText={text => setUsername(text)}/>
+                    <AppInput title='Username' style={styles.input} onChangeText={text => setUsername(text)} onBlur={() => validate({username: {minlength: 8, maxlength: 20, required: true}})}/>
                     {isFieldInError("username") && getErrorsInField("username").map(errMessage => (
                         <AppText style={styles.error}>{errMessage}</AppText>
                     ))}
 
-                    <AppInput title='Password' style={styles.input} secureTextEntry onChangeText={text => setPassword(text)}/>
+                    <AppInput title='Password' style={styles.input} secureTextEntry onChangeText={text => setPassword(text)} onBlur={() => validate({password: {minlength: 6, required: true}})}/>
                     {isFieldInError("password") && getErrorsInField("password").map(errMessage => (
                         <AppText style={styles.error}>{errMessage}</AppText>
                     ))}
 
-                    <AppInput title='Confirm Password' style={styles.input} secureTextEntry onChangeText={text => setConfirm(text)}/>
+                    <AppInput title='Confirm Password' style={styles.input} secureTextEntry onChangeText={text => setConfirm(text)} onBlur={() => validate({confirm: {equalPassword: password}})}/>
                     {isFieldInError("confirm") && getErrorsInField("confirm").map(errMessage => (
                         <AppText style={styles.error}>{errMessage}</AppText>
                     ))}
 
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button title='Sign Up' style={styles.button} onPress={_onPressButton}/>
+                    <Button title='Sign Up' style={styles.button} onPress={handleSignup}/>
                     <View style={{flexDirection: 'row', marginTop: 20}}>
                         <AppText>You created your account? </AppText>
                         <TouchableOpacity onPress={() => {navigation.replace('Login')}}><AppText style={{color: colors.primary}}>Sign In</AppText></TouchableOpacity>
@@ -140,7 +130,8 @@ const styles = StyleSheet.create({
         width: '100%',
         alignSelf: 'center',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingTop: 10
     },
     button: {
         height: 60

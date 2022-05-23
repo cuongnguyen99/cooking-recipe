@@ -7,9 +7,17 @@ const getFoodByID = (foodID) => {
 }
 
 const getFoodByCategory = (categoryID) => {
-    return api.get(endpoint + categoryID);
+    return api.get("posts/" + categoryID);
 }
 
-export default {getFoodByID, getFoodByCategory};
+const getFoodByName = (name) => {
+    return api.get("post/search?name=" + name);
+}
+
+const getNewFood = () => {
+    return api.get("post/new");
+}
+
+export default {getFoodByID, getFoodByCategory, getFoodByName, getNewFood};
 
 

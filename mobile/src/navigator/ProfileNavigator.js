@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { Text } from 'react-native';
-import Screen from '../screens/Screen';
+import React, { useEffect, useState, useContext } from 'react';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProfileScreen from '../screens/ProfileScreen';
+import AuthContext from '../ultility/context';
 import AuthNavigator from './AuthNavigator';
 
 const ProfileStack = createNativeStackNavigator();
 
 function ProfileNavigator({navigation, route}) {
-    const [user, setUser] = useState(null);
+    const {user} = useContext(AuthContext);
 
-    // useEffect(() => {
-    //     if(!user) {
-    //         navigation.replace('Auth');
-    //     }
-    // }, [])
+    useEffect(() => {
+        if(!user) {
+            navigation.replace("Auth");
+        }
+    }, []);
 
-    return (
-        <ProfileStack.Navigator
+    if(user) {
+        return (
+            <ProfileStack.Navigator
                 screenOptions={{
                     headerShown: false
                 }}
@@ -27,8 +27,10 @@ function ProfileNavigator({navigation, route}) {
                     name='Profile'
                     component={ProfileScreen}
                 />
-        </ProfileStack.Navigator>
-    );
+            </ProfileStack.Navigator>
+        );
+    }
+    return(<></>);
 }
 
 export default ProfileNavigator;

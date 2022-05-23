@@ -8,12 +8,15 @@ import NewFood from '../components/NewFood';
 import Screen from './Screen';
 
 import category from '../ultility/api/category';
+import foodAPI from '../ultility/api/food';
 
 function HomeScreen({navigation, route}) {
     const [categories, setCategories] = useState([]);
+    const [newest, setNewest] = useState([]);
 
     useEffect(() => {
         handleGetCategory();
+        handleGetNewest();
     }, []);
 
     const handleGetCategory = async () => {
@@ -28,8 +31,19 @@ function HomeScreen({navigation, route}) {
         setCategories(data);
     }
 
-    const newArivalPress = () => {
-        console.log('New Food!');
+    const handleGetNewest = async () => {
+        const result = await foodAPI.getNewFood();
+        if(!result.ok) {
+            console.log("Error when reder newest food!");
+            return;
+        }
+
+        const data = result.data;
+        setNewest(data);
+    }
+
+    const newArivalPress = (item) => {
+        navigation.navigate('DetailFood', {item: item});
     }
 
     const handleCategoryPress = (categoryID) => {
@@ -51,22 +65,23 @@ function HomeScreen({navigation, route}) {
                 />
 
                 {/* New Food */}
-                {/* <FlatList
-                    data={data}
+                <FlatList
+                    data={newest}
                     keyExtractor={item => item.id}
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     renderItem={({item}) => (
                         <>
                             <NewFood
-                                title={item.title}
-                                avatar={item.userURL}
-                                image={item.foodURL}
+                                title={item.post_name}
+                                avatar={item.username.image_url}
+                                image={item.images[0].img_url}
+                                onPress={() => newArivalPress(item)}
                             />
                             <View style={styles.categoryFooter}></View>
                         </>
                     )}
-                /> */}
+                />
 
                 {/* List Categories */}
                 {categories.map(item => (
