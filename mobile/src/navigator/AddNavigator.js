@@ -33,18 +33,6 @@ function AddNavigator({navigation, route}) {
     }
 
     return(<></>);
-    // return (
-    //     <AddStack.Navigator
-    //         screenOptions={{
-    //             headerShown: false
-    //         }}
-    //     >
-    //         <AddStack.Screen
-    //             name='Add'
-    //             component={AddScreen}
-    //         />
-    //     </AddStack.Navigator>
-    // );
 }
 
 export default AddNavigator;

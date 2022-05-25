@@ -45,7 +45,6 @@ function DetailScreen({navigation, route}) {
                 return setSave(false);
             }
         }
-
     }
 
     const handleSaveFavorite = async () => {

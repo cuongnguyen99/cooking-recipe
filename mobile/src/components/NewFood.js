@@ -6,7 +6,8 @@ import AppText from './AppText';
 function NewFood({title, image, avatar, onPress}) {
     return (
         <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.5}>
-            <ImageBackground resizeMode='cover' source={{uri: image}} style={styles.image}>
+            {/* <ImageBackground resizeMode='cover' source={{uri: image}} style={styles.image}> */}
+            <ImageBackground resizeMode='cover' source={require("../assets/image/img_background.jpg")} style={styles.image}>
                 <View style={styles.layout}>
                 </View>
                 <Image style={styles.avatar} source={{uri: avatar}}/>

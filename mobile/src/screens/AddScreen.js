@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {Image, ImageBackground, Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
+import ImagePicker from 'react-native-image-crop-picker';
 
 import colors from '../styles/colors';
 import Screen from './Screen';
@@ -26,6 +27,8 @@ function AddScreen({navigation, route}) {
     const [des, setDes] = useState('');
     const [category, setCategory] = useState();
     const [categories, setCategories] = useState([]);
+    const [image, setImage] = useState();
+    const [imageUpload, setImageUpload] = useState();
     const [resources, setResources] = useState([
         {
             description: '',
@@ -68,7 +71,32 @@ function AddScreen({navigation, route}) {
     }
 
     const handleImage = () => {
-        console.log('Image click');
+        let imageList = [];
+        let options = {
+            multiple: true,
+            waitAnimationEnd: false,
+            incluExif: true,
+            forceJpg: true,
+            mediaType: 'photo',
+            compressImageQuality: 0.8,
+            maxFiles: 5,
+            includeBase64: true,
+        }
+        ImagePicker.openPicker(options).then(response => {
+            response.map(item => {
+                const temp = item.path.split("/");
+                const filename = temp[temp.length - 1];
+                imageList.push({
+                    filename: filename,
+                    uri: item.path,
+                    data: item.data,
+                });
+            })
+            return imageList;
+        }).then(response => {
+            setImage(response);
+            return console.log(image);
+        }).catch(error => console.log(error.message));
     }
 
     const handleAddResource = () => {
@@ -142,7 +170,10 @@ function AddScreen({navigation, route}) {
                 {/* Image */}
                 <View style={styles.imageContainer}>
                     <ImageBackground
-                        source={{uri: '../assets/image/img_background.jpg'}}
+                        source={
+                            image ? {uri: image[0].uri} 
+                            : {uri: 'https://res.cloudinary.com/cooking-recipe/image/upload/v1653375885/canstockphoto35091073_pltq5b.jpg'}
+                        }
                         style={styles.image}
                     >
                         <View

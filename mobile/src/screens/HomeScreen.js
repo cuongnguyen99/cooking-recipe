@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {FlatList, ScrollView, StyleSheet, View} from 'react-native';
+import React, {useState, useEffect, useMemo, useCallback} from 'react';
+import {FlatList, ScrollView, StyleSheet, View, SectionList} from 'react-native';
 
 import AppText from '../components/AppText';
 import Category from '../components/Category';
@@ -13,11 +13,41 @@ import foodAPI from '../ultility/api/food';
 function HomeScreen({navigation, route}) {
     const [categories, setCategories] = useState([]);
     const [newest, setNewest] = useState([]);
+    const [section, setSection] = useState([]);
 
     useEffect(() => {
-        handleGetCategory();
-        handleGetNewest();
+        // // Promise.all([handleGetCategory(), handleGetNewest()]).finally(() => {
+        // //     handleData();
+        // // });
+        // handleGetNewest().then(() => {
+        //     handleGetCategory().then(() => {
+        //         handleData();
+        //     })
+        // });
+        handleData();
     }, []);
+
+    const handleData = () => {
+        Promise.all([handleGetCategory(), handleGetNewest()]).then(([categoryData, newestData]) => {
+            let newRecipe = {
+                title: "Newest Recipe",
+                horizontal: true,
+                data: [...newestData]
+            };
+            let newCategories = categoryData.map((item) => {
+                return {
+                    title: item.category_name,
+                    data: [{
+                        id: item.id,
+                        name: item.category_name,
+                        img_url: item.img_url
+                    }]
+                };
+            });
+            const newSection = [newRecipe,...newCategories];
+            setSection(newSection);
+        })
+    }
 
     const handleGetCategory = async () => {
         const result = await category.getCategory();
@@ -29,6 +59,7 @@ function HomeScreen({navigation, route}) {
 
         const data = result.data;
         setCategories(data);
+        return data;
     }
 
     const handleGetNewest = async () => {
@@ -40,6 +71,7 @@ function HomeScreen({navigation, route}) {
 
         const data = result.data;
         setNewest(data);
+        return data;
     }
 
     const newArivalPress = (item) => {
@@ -50,46 +82,60 @@ function HomeScreen({navigation, route}) {
         navigation.navigate('FoodList', {categoryID: categoryID});
     }
 
-    return (
-        <Screen>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                {/* Header Container */}
+    const renderNewest = useCallback(({item}) => (
+        <>
+            <NewFood
+                title={item.post_name}
+                avatar={item.username.image_url}
+                image={item.images[0].img_url}
+                onPress={() => newArivalPress(item)}
+            />
+            <View style={styles.categoryFooter}></View>
+        </>
+    ), []);
+
+   const renderSection = useCallback(({ section }) => (<>
+            {
+                section.horizontal && (<>
                 <View style={styles.headerContainer}>
-                    <AppText style={styles.header}>Hello guys!</AppText>
-                    <AppText style={styles.subHeader}>Let's discovery some recipes around here...</AppText>
+                <AppText style={styles.header}>Hello guys!</AppText>
+                <AppText style={styles.subHeader}>Let's discovery some recipes around here...</AppText>
                 </View>
                 <HeaderNavigate
-                    title='Newest Food'
+                    title="Newest Recipe"
                     style={styles.newFoodHeader}
                     onPress={handleCategoryPress}
                 />
-
-                {/* New Food */}
                 <FlatList
-                    data={newest}
+                    data={section.data}
                     keyExtractor={item => item.id}
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    renderItem={({item}) => (
-                        <>
-                            <NewFood
-                                title={item.post_name}
-                                avatar={item.username.image_url}
-                                image={item.images[0].img_url}
-                                onPress={() => newArivalPress(item)}
-                            />
-                            <View style={styles.categoryFooter}></View>
-                        </>
-                    )}
+                    maxToRenderPerBatch={10}
+                    renderItem={renderNewest}
                 />
-
-                {/* List Categories */}
-                {categories.map(item => (
-                    <View key={item.id}>
+                </>)
+            }
+        </>
+    ),[section]) 
+    
+    return (
+        <Screen>
+            <SectionList
+                sections={section}
+                keyExtractor={(item, index) => item + index}
+                showsVerticalScrollIndicator={false}
+                renderSectionHeader={renderSection}
+                renderItem={({item ,section}) => {
+                    if(section.horizontal) {
+                        return null;
+                    }
+                    return(
+                        <>
                         <HeaderNavigate
-                                    title={item.category_name}
-                                    style={styles.categoryHeader}
-                                    onPress={() => handleCategoryPress(item.id)}
+                            title={item.name}
+                            style={styles.categoryHeader}
+                            onPress={() => handleCategoryPress(item.id)}
                         />
                         <Category
                             title={item.category_name}
@@ -97,9 +143,10 @@ function HomeScreen({navigation, route}) {
                             onPress={() => handleCategoryPress(item.id)}
                         />
                         <View style={styles.categoryFooter} />
-                    </View>
-                ))}
-            </ScrollView>   
+                        </>
+                    )
+                }}
+            />
         </Screen>
     );
 }

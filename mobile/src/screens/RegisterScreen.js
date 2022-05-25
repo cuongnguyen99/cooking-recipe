@@ -42,7 +42,8 @@ function RegisterScreen({navigation, route}) {
                 setUploadVisible(false);
                 return console.log(result.problem);
             }
-            console.log("Register successfully!");
+            setFullname(""); setUsername(""); setPassword(""); setConfirm("");
+            navigation.replace('Login');
         }
     }
 

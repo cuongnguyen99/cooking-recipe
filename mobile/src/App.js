@@ -8,6 +8,7 @@ import AppNavigator from './navigator/AppNavigator';
 import colors from './styles/colors';
 import MainNavigator from './navigator/MainNavigator';
 import AuthContext from './ultility/context';
+import cache from './ultility/cache';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -16,8 +17,20 @@ function App() {
   useEffect(()=>{
     setTimeout(() => {
       SplashScreen.hide();
-    }, 3000);
+    }, 1000);
   }, []);
+
+  useEffect(() => {
+    getUserOffline();
+  }, []);
+
+  const getUserOffline = async () => {
+    const result = await cache.get("user");
+    if(result !== null) {
+      return setUser(result);
+    }
+    return setUser(null);
+  }
 
   return (
     <AuthContext.Provider

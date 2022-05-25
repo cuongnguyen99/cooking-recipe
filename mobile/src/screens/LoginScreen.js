@@ -13,6 +13,7 @@ import colors from '../styles/colors';
 import userApi from '../ultility/api/user';
 import user from '../ultility/api/user';
 import AuthContext from '../ultility/context';
+import cache from '../ultility/cache';
 
 function LoginScreen({navigation, route}) {
     const auth = useContext(AuthContext);
@@ -47,6 +48,7 @@ function LoginScreen({navigation, route}) {
             const user = userData.data;
             auth.setAccessToken(access_token);
             auth.setUser(user);
+            cache.store("user" ,user);
             navigation.replace("App");
         }
     }
