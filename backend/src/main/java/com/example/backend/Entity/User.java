@@ -3,6 +3,7 @@ package com.example.backend.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,9 +11,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+//@NoArgsConstructor
 @Entity
+@RequiredArgsConstructor
 @Table(name = "users")
 public class User implements Serializable {
     @Id

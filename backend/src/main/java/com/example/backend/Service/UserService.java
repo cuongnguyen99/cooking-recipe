@@ -71,6 +71,13 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+    public User updateUser(User user) {
+        log.info("Update User");
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        return user;
+    }
+
     public Role saveRole(Role role) {
         log.info("Save new role {} to the db", role);
         return roleRepository.save(role);

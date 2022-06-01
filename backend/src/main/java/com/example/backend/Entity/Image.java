@@ -13,6 +13,8 @@ import javax.persistence.*;
 @Table(name = "images")
 public class Image {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String img_url;
+    @Column(name = "img_url")
+    private String imgUrl;
 }

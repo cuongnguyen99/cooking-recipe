@@ -1,13 +1,7 @@
 package com.example.backend.Service;
 
-import com.example.backend.Entity.Image;
-import com.example.backend.Entity.Post;
-import com.example.backend.Entity.Resource;
-import com.example.backend.Entity.Step;
-import com.example.backend.Repository.ImageRepository;
-import com.example.backend.Repository.PostRepository;
-import com.example.backend.Repository.ResourceRepository;
-import com.example.backend.Repository.StepRepository;
+import com.example.backend.Entity.*;
+import com.example.backend.Repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +18,7 @@ public class PostService {
     private final ResourceRepository resourceRepository;
     private final StepRepository stepRepository;
     private final ImageRepository imageRepository;
+    private final UserRepository userRepository;
     @Autowired
     private PostRepository postRepository;
 
@@ -43,9 +38,23 @@ public class PostService {
         return postRepository.findPostByTime();
     }
 
-    public Post savePost(Post post) {
+    public ArrayList<Post> getPostByUsername(String username) {
+        return postRepository.findPostByUsername(username);
+    }
+
+    public int savePost(Post post, String username) {
+        User user = userRepository.findByUsername(username);
+        post.setUsername(user);
         postRepository.save(post);
-        return post;
+        return post.getId();
+    }
+
+    public ArrayList<Image> addImageToPost(ArrayList<Image> images, int postID) {
+        Post post = postRepository.findById(postID);
+        for (Image image: images) {
+            post.getImages().add(image);
+        }
+        return images;
     }
 
     public ArrayList<Resource> addResourceToPost(ArrayList<Resource> resources, int postID) {
@@ -64,11 +73,13 @@ public class PostService {
         return steps;
     }
 
-    public ArrayList<Image> addImageToPost(ArrayList<Image> images, int postID) {
-        Post post = postRepository.findById(postID);
-        for (Image image: images) {
-            post.getImages().add(image);
-        }
-        return images;
+    public void removePost(Post post) {
+        log.info("Delete post!");
+        postRepository.delete(post);
+    }
+
+    public Post updatePost(Post post) {
+        postRepository.save(post);
+        return post;
     }
 }

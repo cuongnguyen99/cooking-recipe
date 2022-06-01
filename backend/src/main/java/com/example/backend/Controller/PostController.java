@@ -30,6 +30,11 @@ public class PostController {
         return postService.getPostByID(id);
     }
 
+    @GetMapping("/posts")
+    public ResponseEntity<ArrayList<Post>> getPostByUsername(@RequestParam String username) {
+        return ResponseEntity.ok().body(postService.getPostByUsername(username));
+    }
+
     @GetMapping("/post/new")
     public ResponseEntity<List<Post>> getNewPost() {
         return ResponseEntity.ok().body(postService.getPostByTime());
@@ -41,9 +46,8 @@ public class PostController {
     }
 
     @PostMapping("post/save")
-    public ResponseEntity<Post> savePost(@RequestBody Post post) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/save").toUriString());
-        return ResponseEntity.created(uri).body(postService.savePost(post));
+    public ResponseEntity<?> savePost(@RequestBody Post post, @RequestParam String username) {
+        return ResponseEntity.ok().body(postService.savePost(post, username));
     }
 
     @PostMapping("post/saveresource")
@@ -65,4 +69,19 @@ public class PostController {
 
         return ResponseEntity.created(uri).body(postService.addImageToPost(images, postID));
     }
+
+    @PutMapping("post/update")
+    public ResponseEntity<Post> updatePost(@RequestBody Post post) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/update").toUriString());
+
+        return ResponseEntity.created(uri).body(postService.updatePost(post));
+    }
+
+    @DeleteMapping("post/delete")
+    public ResponseEntity<Post> deletePost(@RequestBody Post post) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/delete").toUriString());
+        postService.removePost(post);
+        return ResponseEntity.ok().build();
+    }
+
 }

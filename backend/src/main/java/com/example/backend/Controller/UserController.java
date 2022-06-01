@@ -70,6 +70,13 @@ public class UserController {
         return ResponseEntity.created(uri).body(userService.removeFavoriteList(username, postID));
     }
 
+    @PutMapping("/user/update")
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/update").toUriString());
+
+        return ResponseEntity.created(uri).body(userService.updateUser(user));
+    }
+
     @Data
     class RoleToUserForm {
         private String username;

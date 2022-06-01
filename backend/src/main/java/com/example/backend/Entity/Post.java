@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -23,8 +24,10 @@ public class Post {
     private int categoryID;
     @Column(name = "time_created")
     private String time;
+    @Column(name = "accepted")
+    private boolean accepted;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "username")
     private User username;
 

@@ -23,4 +23,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     @Query(value = "select * from posts order by posts.time_created desc limit 0,10", nativeQuery = true)
     ArrayList<Post> findPostByTime();
+
+    @Query(value = "select * from posts where posts.username = :username", nativeQuery = true)
+    ArrayList<Post> findPostByUsername(@Param("username") String username);
 }
