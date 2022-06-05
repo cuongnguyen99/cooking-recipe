@@ -3,6 +3,7 @@ import { Image, View, StyleSheet, TouchableOpacity, TouchableHighlight, Keyboard
 import Icon from 'react-native-vector-icons/Feather';
 import { useValidation } from 'react-native-form-validator';
 import jwtDecode from 'jwt-decode';
+import Toast from 'react-native-simple-toast';
 
 import AppInput from '../components/AppInput';
 import AppText from '../components/AppText';
@@ -14,11 +15,13 @@ import userApi from '../ultility/api/user';
 import user from '../ultility/api/user';
 import AuthContext from '../ultility/context';
 import cache from '../ultility/cache';
+import AppLoading from './AppLoading';
 
 function LoginScreen({navigation, route}) {
     const auth = useContext(AuthContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
     
     const {validate, isFieldInError, getErrorsInField, getErrorMessages} = useValidation({
         state: {username, password}
@@ -35,25 +38,33 @@ function LoginScreen({navigation, route}) {
         });
 
         if(valid) {
+            setLoading(true);
             const result = await userApi.login(username, password);
             if(!result.ok) {
+                Toast.showWithGravity("Login fail! " + result.problem, Toast.LONG, Toast.BOTTOM);
+                setLoading(false);
                 return console.log("login fail!");
             }
             const access_token = result.data.access_token;
             const userInfor = jwtDecode(result.data.access_token);
             const userData = await userApi.getUser(userInfor.sub, access_token);
             if(!userData.ok) {
+                Toast.showWithGravity("Error when getting user's information! " + result.problem, Toast.LONG, Toast.BOTTOM);
+                setLoading(false);
                 return console.error("Error when login!");
             }
             const user = userData.data;
             auth.setAccessToken(access_token);
             auth.setUser(user);
             cache.store("user" ,user);
+            cache.store("access_token", access_token);
+            setLoading(false);
             navigation.replace("App");
         }
     }
 
     return (
+        <>
         <Screen
         style={{
             justifyContent: 'center',
@@ -94,6 +105,8 @@ function LoginScreen({navigation, route}) {
                 </View>
             </KeyboardAvoidingView>
         </Screen>
+        {loading ? (<AppLoading/>) : null}
+        </>
     );
 }
 

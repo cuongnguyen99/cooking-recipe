@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import {Image, ImageBackground, Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
 import ImagePicker from 'react-native-image-crop-picker';
+import api from 'apisauce';
 
 import colors from '../styles/colors';
 import Screen from './Screen';
@@ -16,19 +17,19 @@ import Resource from '../components/Resource';
 import Step from '../components/Step';
 import AuthContext from '../ultility/context';
 import categoriesApi from '../ultility/api/category';
-
-const countries = ["Egypt", "Canada", "Australia", "Ireland"];
+import foodAPI from '../ultility/api/food';
+import AppLoading from './AppLoading';
+import Toast from 'react-native-simple-toast';
 
 function AddScreen({navigation, route}) {
     const {user, accessToken} = useContext(AuthContext);
-    const [desHeight, setDesHeight] = useState(30);
+    const [loading, setloading] = useState(false);
     const [disable, setDisable] = useState(true);
     const [title, setTitle] = useState('');
     const [des, setDes] = useState('');
     const [category, setCategory] = useState();
     const [categories, setCategories] = useState([]);
     const [image, setImage] = useState();
-    const [imageUpload, setImageUpload] = useState();
     const [resources, setResources] = useState([
         {
             description: '',
@@ -36,7 +37,7 @@ function AddScreen({navigation, route}) {
     ]);
     const [steps, setSteps] = useState([
         {
-            step_number: 1,
+            stepNumber: 1,
             description: '',
         },
     ]);
@@ -46,7 +47,7 @@ function AddScreen({navigation, route}) {
     }, []);
 
     useEffect(() => {
-        if( des && title && category) {
+        if( des && title && category && image) {
             let checkResource = resources.every((item) => {
                 return item.description !== "";
             })
@@ -60,7 +61,7 @@ function AddScreen({navigation, route}) {
                 setDisable(true);
             }
         }
-    }, [steps, resources, des, title, category]);
+    }, [steps, resources, des, title, category, image]);
 
     const getCategories = async () => {
         const result = await categoriesApi.getCategory();
@@ -68,6 +69,75 @@ function AddScreen({navigation, route}) {
             return console.log("Error when getting categories!");
         }
         setCategories(result.data);
+    }
+
+
+    const onUploadPress = async () => {
+        try {
+            setloading(true);
+            const imageUpload = [];
+            const imageApi = api.create({baseURL: "https://api.cloudinary.com/v1_1/mycooknltc/"});
+
+            for(var i=0; i<image.length; i++) {
+                const data = new FormData();
+                data.append("file", image[i]);
+                data.append("upload_preset", "bnkilven");
+
+                const result = await imageApi.post("image/upload", data);
+                
+                if(!result.ok) {
+                    console.log(result.problem);
+                    setloading(false);
+                    return Toast.showWithGravity("Error when uploading image to server! Please try later!", Toast.LONG, Toast.TOP);
+                }
+
+                console.log("2");
+                imageUpload.push({imgUrl: result.data.url});
+            }
+
+            console.log("Oke");
+            console.log(imageUpload);
+
+            const post = {
+                "post_name": title,
+                "description": des,
+                "categoryID": category.id
+            };
+
+            const rs = await foodAPI.saveFood(post, user.username, accessToken);
+            if(!rs.ok) {
+                console.log(rs.problem);
+                setloading(false);
+                return Toast.showWithGravity("Error when uploading recipe to server! Please try later!", Toast.LONG, Toast.TOP);
+            }
+
+            const postID = rs.data;
+            await Promise.all([
+                foodAPI.saveResources(resources, postID, accessToken), 
+                foodAPI.saveSteps(steps, postID, accessToken), 
+                foodAPI.saveImages(imageUpload, postID, accessToken)
+            ]);
+            console.log("Successful!");
+            setloading(false);
+            Toast.showWithGravity("Upload your recipe successfully!", Toast.LONG, Toast.TOP);
+            setDes(''); setTitle(''); setImage(null);
+            setSteps([
+                {
+                    stepNumber: 1,
+                    description: '',
+                },
+            ]);
+            setResources([
+                {
+                    description: '',
+                },
+            ]);
+            setCategory({});
+            setDisable(true);
+        } catch (error) {
+            console.error(error.message);
+            setloading(false);
+        }
     }
 
     const handleImage = () => {
@@ -87,16 +157,14 @@ function AddScreen({navigation, route}) {
                 const temp = item.path.split("/");
                 const filename = temp[temp.length - 1];
                 imageList.push({
-                    filename: filename,
+                    name: filename,
                     uri: item.path,
-                    data: item.data,
+                    type: `image/${item.path.split(".")[2]}`,
                 });
-            })
-            return imageList;
-        }).then(response => {
-            setImage(response);
-            return console.log(image);
-        }).catch(error => console.log(error.message));
+            });
+            setImage(imageList);
+        })
+        .catch(error => console.log(error.message));
     }
 
     const handleAddResource = () => {
@@ -111,7 +179,7 @@ function AddScreen({navigation, route}) {
     const handleAddStep = () => {
         let newArr = steps;
         let item = {
-            step_number: newArr[newArr.length - 1].step_number + 1,
+            stepNumber: newArr[newArr.length - 1].stepNumber + 1,
             description: '',
         };
         newArr = [...newArr, item];
@@ -129,16 +197,16 @@ function AddScreen({navigation, route}) {
 
     const handleRemoveStep = (item, index) => {
         const newArr = steps.filter((m) => {
-            if(m.step_number !== item.step_number) {
+            if(m.stepNumber !== item.stepNumber) {
                 return m;
             }
         });
         const tempt = newArr.map((m) => {
-            if(m.step_number < item.step_number) {
+            if(m.stepNumber < item.stepNumber) {
                 return m;
             }
             else {
-                let t = {...m, step_number: m.step_number - 1};
+                let t = {...m, stepNumber: m.stepNumber - 1};
                 return t;
             }
         });
@@ -151,7 +219,6 @@ function AddScreen({navigation, route}) {
         newResource[index].description = text;
         
         setResources(newResource);
-        console.log(resources);
     }
 
     const handleStepChange = (text, item, index) => {
@@ -160,10 +227,10 @@ function AddScreen({navigation, route}) {
         newStep[index].description = text;
 
         setSteps(newStep);
-        console.log(newStep);
     }
 
     return (
+        <>
         <Screen style={styles.screen}>
             <ScrollView showsVerticalScrollIndicator={false}>
 
@@ -272,10 +339,12 @@ function AddScreen({navigation, route}) {
                 {/* Button */}
                 {
                     disable ? (<Button style={styles.buttonDisable} title='Create' titleStyle={{fontSize: 20, fontWeight: 'normal'}} disable={true}/>)
-                    : (<Button style={styles.button} title='Create' titleStyle={{fontSize: 20, fontWeight: 'normal'}}/>)
+                    : (<Button style={styles.button} title='Create' titleStyle={{fontSize: 20, fontWeight: 'normal'}} onPress={onUploadPress}/>)
                 }
             </ScrollView>
         </Screen>
+        {loading ? <AppLoading/> : null}
+        </>
     );
 }
 

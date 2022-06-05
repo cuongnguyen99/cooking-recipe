@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useMemo, useCallback} from 'react';
 import {FlatList, ScrollView, StyleSheet, View, SectionList} from 'react-native';
+import Toast from 'react-native-simple-toast';
 
 import AppText from '../components/AppText';
 import Category from '../components/Category';
@@ -9,22 +10,19 @@ import Screen from './Screen';
 
 import category from '../ultility/api/category';
 import foodAPI from '../ultility/api/food';
+import AppLoading from './AppLoading';
 
 function HomeScreen({navigation, route}) {
     const [categories, setCategories] = useState([]);
     const [newest, setNewest] = useState([]);
     const [section, setSection] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // // Promise.all([handleGetCategory(), handleGetNewest()]).finally(() => {
-        // //     handleData();
-        // // });
-        // handleGetNewest().then(() => {
-        //     handleGetCategory().then(() => {
-        //         handleData();
-        //     })
-        // });
-        handleData();
+        setLoading(true);
+        setTimeout(() => {
+            handleData();
+        }, 3000);
     }, []);
 
     const handleData = () => {
@@ -46,6 +44,11 @@ function HomeScreen({navigation, route}) {
             });
             const newSection = [newRecipe,...newCategories];
             setSection(newSection);
+            setLoading(false);
+        }).catch(error => {
+            console.log(error.message);
+            Toast.showWithGravity("Having some error! Please try again!");
+            setLoading(false);
         })
     }
 
@@ -120,6 +123,7 @@ function HomeScreen({navigation, route}) {
     ),[section]) 
     
     return (
+        <>
         <Screen>
             <SectionList
                 sections={section}
@@ -148,6 +152,8 @@ function HomeScreen({navigation, route}) {
                 }}
             />
         </Screen>
+        {loading ? (<AppLoading/>) : null}
+        </>
     );
 }
 

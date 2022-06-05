@@ -9,6 +9,7 @@ import colors from './styles/colors';
 import MainNavigator from './navigator/MainNavigator';
 import AuthContext from './ultility/context';
 import cache from './ultility/cache';
+import ChangePasswordScreen from './screens/ChangePasswordScreen';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -22,6 +23,7 @@ function App() {
 
   useEffect(() => {
     getUserOffline();
+    getAccessTokenOffline();
   }, []);
 
   const getUserOffline = async () => {
@@ -30,6 +32,14 @@ function App() {
       return setUser(result);
     }
     return setUser(null);
+  }
+
+  const getAccessTokenOffline = async () => {
+    const result = await cache.get("access_token");
+    if(result !== null) {
+      return setAccessToken(result);
+    }
+    return setAccessToken('');
   }
 
   return (

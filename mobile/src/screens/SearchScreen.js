@@ -7,22 +7,47 @@ import Screen from './Screen';
 import HorPost from '../components/HorPost';
 
 import Icon from 'react-native-vector-icons/Feather';
+import {useValidation} from 'react-native-form-validator';
 
 import foodAPI from '../ultility/api/food';
+import Toast from 'react-native-simple-toast';
+import AppLoading from './AppLoading';
 
 function SearchScreen({navigation, route}) {
     const [input, setInput] = useState('');
     const [filter, setFilter] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const {validate, isFieldInError, getErrorsInField, getErrorMessages} = useValidation({state : {input}});
 
     const searchFood = async () => {
-        const result = await foodAPI.getFoodByName(input);
-        if(!result.ok) {
-            console.error("Searching error!");
-            return;
+        try {
+            const valid = validate({
+                input: {required: true},
+            });
+            
+            if(valid) {
+                setLoading(true);
+                const result = await foodAPI.getFoodByName(input);
+                if(!result.ok) {
+                    console.error("Searching error!");
+                    setLoading(false);
+                    return Toast.showWithGravity("Error when getting Recipe!", Toast.LONG, Toast.TOP);
+                }
+                const data = result.data;
+                setTimeout(() => {
+                    setFilter(data);
+                    return setLoading(false);
+                }, 2000);
+            }
+            else{
+                return Toast.showWithGravity("Please enter your Recipe's name you are looking for...!", Toast.LONG, Toast.TOP);
+            }
+        } catch (error) {
+            Toast.showWithGravity("Error when getting Recipe!", Toast.LONG, Toast.TOP);
+            console.log(error.message);
         }
-        const data = result.data;
-        console.log(data);
-        setFilter(data);
+        
     }
 
     const handleClickOnFood = (item) => {
@@ -30,6 +55,7 @@ function SearchScreen({navigation, route}) {
     }
 
     return (
+        <>
         <Screen>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.inputContainer}>
@@ -49,7 +75,7 @@ function SearchScreen({navigation, route}) {
                                 <View style={styles.item} key={item.id}>
                                     <HorPost
                                         title={item.post_name}
-                                        mainImg={item.images[0].img_url}
+                                        mainImg={item.images[0].imgUrl}
                                         description={item.description}
                                         userImg={item.username.image_url}
                                         username={item.username.username}
@@ -62,6 +88,8 @@ function SearchScreen({navigation, route}) {
                 </ScrollView>
             </ScrollView>
         </Screen>
+        {loading ? <AppLoading/> : null}
+        </>
     );
 }
 

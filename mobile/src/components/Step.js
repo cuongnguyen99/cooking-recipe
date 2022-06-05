@@ -15,7 +15,7 @@ function Step({value, item, index, onChangeText, onRemoveStep}) {
             style={styles.step}
             key={index}
             >
-                <ListingItem step={item.step_number} size={50} contentColor={colors.secondary} backgroundColor={colors.box_item}/>
+                <ListingItem step={item.stepNumber} size={50} contentColor={colors.secondary} backgroundColor={colors.box_item}/>
                 <AppInput title='Enter this step' style={{width: '78%', marginLeft: 5}}
                     value={value}
                     onChangeText={onChangeText}
@@ -32,7 +32,7 @@ function Step({value, item, index, onChangeText, onRemoveStep}) {
             style={styles.step}
             key={index}
             >
-                <ListingItem step={item.step_number} size={50} contentColor={colors.secondary} backgroundColor={colors.box_item}/>
+                <ListingItem step={item.stepNumber} size={50} contentColor={colors.secondary} backgroundColor={colors.box_item}/>
                 <AppInput title='Enter this step' style={{width: '85%'}}
                     value={value}
                     onChangeText={onChangeText}

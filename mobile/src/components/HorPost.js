@@ -24,7 +24,6 @@ function HorPost({mainImg,title, description, username, userImg, onPress, iconPr
                     </View>
                 </View>
             </TouchableOpacity>
-            <Icon name='bookmark' onPress={iconPress} size={32} style={styles.icon} />
         </View>
     );
 }

@@ -40,6 +40,26 @@ const getUser = (username, access_token) => {
     return api.get("user/infor?username=" + username, {}, {headers: {Authorization: "Bearer " + access_token}});
 }
 
+const saveUser = (user, access_token, onUploadProgress) => {
+    let data = JSON.stringify(user);
+    return api.put("user/update", data, 
+        {
+            headers: {Authorization: "Bearer "+access_token},
+            onUploadProgress: (progress) => onUploadProgress(progress.loaded / progress.total)
+        }
+    )
+}
+
+const changePassword = (user, access_token, onUploadProgress) => {
+    let data = JSON.stringify(user);
+    return api.put("user/password", data,
+        {
+            headers: {Authorization: "Bearer "+access_token},
+            onUploadProgress: (progress) => onUploadProgress(progress.loaded / progress.total)
+        }
+    )
+}
+
 const addFavorite = (username, postID, access_token) => {
     return api.post("user/addfavorite?username="+ username + "&postID=" +postID, {}, {
         headers: {Authorization: "Bearer "+ access_token}
@@ -52,4 +72,11 @@ const removeFavorite = (username, postID, access_token) => {
     });
 }
 
-export default {login, signup, getUser, addFavorite, removeFavorite};
+const postCreated = (username, access_token) => {
+    return api.get("posts?username="+username, {},
+    {
+        headers: {Authorization: "Bearer "+access_token}
+    })
+}
+
+export default {login, signup, getUser, addFavorite, removeFavorite, postCreated, saveUser, changePassword};

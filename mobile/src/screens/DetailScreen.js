@@ -93,7 +93,7 @@ function DetailScreen({navigation, route}) {
                         keyExtractor={item => item.id}
                         renderItem={({item}) => (
                             <ImageBackground
-                                source={{uri: item.img_url}}
+                                source={{uri: item.imgUrl}}
                                 style={styles.image}
                                 resizeMode='cover'
                             >

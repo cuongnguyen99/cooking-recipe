@@ -51,7 +51,7 @@ function ListFoodScreen({navigation, route}) {
                 keyExtractor={item => item.id}
                 renderItem={({item}) => (
                     <VerPost
-                        image={item.images[0].img_url}
+                        image={item.images[0].imgUrl}
                         title={item.post_name}
                         userImg={item.username.image_url}
                         username={item.username.username}

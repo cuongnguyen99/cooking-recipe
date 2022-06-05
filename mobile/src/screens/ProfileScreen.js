@@ -6,38 +6,47 @@ import Listing from '../components/Listing';
 import AuthNavigator from '../navigator/AuthNavigator';
 import colors from '../styles/colors';
 import AuthContext from '../ultility/context';
+import AppLoading from './AppLoading';
 import Screen from './Screen';
 
-const items = [
-    {
-        content: 'My Information',
-        name: 'info'
-    },
-    {
-        content: 'My Recipe',
-        name: 'book'
-    },
-    {
-        content: 'Policy',
-        name: 'clipboard'
-    },
-];
-
 function ProfileScreen({navigation, route}) {
-    const {user, accessToken, setUser}= useContext(AuthContext);
+    const {user, accessToken, setUser, setAccessToken}= useContext(AuthContext);
+    const [loading, setLoading] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
 
+    console.log(user);
     useEffect(() => {
         if(!user) {
             navigation.replace("Auth");
         }
     }, []);
 
+    useEffect(() => {
+        checkAdmin();
+    }, []);
+
+    const checkAdmin = () => {
+        const roleArr = user.roles;
+        const check = roleArr.some(item => {
+            return item.id == 2;
+        });
+        if(check) {
+            setIsAdmin(true);
+        }
+    }
+
     const handleSignOut = () => {
-        setUser(null);
-        navigation.replace("App");
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+            setAccessToken('');
+            setUser(null);
+            navigation.replace("App");
+        }, 2270);
     }
 
     return (
+        <>
         <Screen style={styles.container}>
             <View style={styles.profile}>
 
@@ -51,18 +60,18 @@ function ProfileScreen({navigation, route}) {
                     <AppText style={styles.username}>{user.username}</AppText>
                     <AppText style={styles.fullname}>{user.fullname}</AppText>
                 </View>
+               
+                <Listing title={'My Information'} icon={'info'} style={styles.listing} onPress={() => navigation.navigate("ChangeProfile")} />
+                <Listing title={'Change Password'} icon={'lock'} style={styles.listing} onPress={() => navigation.navigate("ChangePassword")}/>
+                <Listing title={'My Recipe'} icon={'book'} style={styles.listing} onPress={() => {navigation.navigate("YourRecipe")}}/>
+                {isAdmin ? <Listing title={'Manage Recipe'} icon={'clipboard'} style={styles.listing} onPress={() => {navigation.navigate("YourRecipe")}}/> : null}
                 
-                <FlatList
-                    data={items}
-                    keyExtractor={item => item.name}
-                    renderItem={({item}) => (
-                        <Listing title={item.content} icon={item.name} style={styles.listing}/>
-                    )}
-                />
 
             </View>
             <Button style={styles.button} title='Sign Out' onPress={handleSignOut}/>
         </Screen>
+        {loading ? (<AppLoading/>) : null}
+        </>
     );
 }
 

@@ -31,7 +31,7 @@ function SaveScreen({navigation, route}) {
                             <View style={styles.item} key={item.id}>
                                 <HorPost
                                     title={item.post_name}
-                                    mainImg={item.images[0].img_url}
+                                    mainImg={item.images[0].imgUrl}
                                     description={item.description}
                                     userImg={item.username.image_url}
                                     username={item.username.username}
