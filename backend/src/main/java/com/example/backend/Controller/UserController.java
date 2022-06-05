@@ -77,6 +77,13 @@ public class UserController {
         return ResponseEntity.created(uri).body(userService.updateUser(user));
     }
 
+    @PutMapping("user/password")
+    public ResponseEntity<User> changePassword(@RequestBody User user) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/password").toUriString());
+
+        return ResponseEntity.created(uri).body(userService.changePassword(user));
+    }
+
     @Data
     class RoleToUserForm {
         private String username;

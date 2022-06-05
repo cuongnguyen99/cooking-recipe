@@ -84,4 +84,16 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("post/savenewpost")
+    public ResponseEntity<Post> saveNewPost(@RequestBody Post post, @RequestParam String username) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/savenewpost").toUriString());
+
+        return ResponseEntity.created(uri).body(postService.saveNewPost(post, username));
+    }
+
+    @GetMapping("post/accept")
+    public ResponseEntity<ArrayList<Post>> getPostNotAccepted() {
+        return ResponseEntity.ok().body(postService.findPostNotAccepted());
+    }
+
 }

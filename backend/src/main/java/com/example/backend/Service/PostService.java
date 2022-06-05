@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 @Service
@@ -43,8 +45,12 @@ public class PostService {
     }
 
     public int savePost(Post post, String username) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(("yyyy/MM/dd HH:mm:ss"));
+        LocalDateTime now = LocalDateTime.now();
+
         User user = userRepository.findByUsername(username);
         post.setUsername(user);
+        post.setTime(dtf.format(now));
         postRepository.save(post);
         return post.getId();
     }
@@ -75,11 +81,22 @@ public class PostService {
 
     public void removePost(Post post) {
         log.info("Delete post!");
+        post.setUsername(null);
         postRepository.delete(post);
     }
 
     public Post updatePost(Post post) {
         postRepository.save(post);
         return post;
+    }
+
+    public Post saveNewPost(Post post, String username) {
+        User user = userRepository.findByUsername(username);
+        post.setUsername(user);
+        return postRepository.save(post);
+    }
+
+    public ArrayList findPostNotAccepted() {
+        return postRepository.findPostNotAccepted();
     }
 }

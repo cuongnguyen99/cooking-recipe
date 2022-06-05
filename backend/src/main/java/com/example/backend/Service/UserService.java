@@ -72,7 +72,13 @@ public class UserService implements UserDetailsService {
     }
 
     public User updateUser(User user) {
-        log.info("Update User");
+        log.info("Update User :", user.getImage_url());
+        userRepository.save(user);
+        return user;
+    }
+
+    public User changePassword(User user) {
+        log.info("Changed password");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return user;
