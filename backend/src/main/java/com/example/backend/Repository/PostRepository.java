@@ -12,16 +12,17 @@ import java.util.ArrayList;
 public interface PostRepository extends JpaRepository<Post, Integer> {
 
     //Find all post by category_id
-    ArrayList<Post> findPostByCategoryID(int categoryID);
+    @Query(value = "select * from posts where posts.category_id = :categoryID and posts.accepted = true;", nativeQuery = true)
+    ArrayList<Post> findPostByCategoryID(@Param("categoryID") int categoryID);
 
     //Find post by id
     @Query(value = "select * from posts where posts.id = :id", nativeQuery = true)
     Post findById(@Param("id") int id);
 
-    @Query(value = "select * from posts where posts.post_name like %:name%", nativeQuery = true)
+    @Query(value = "select * from posts where posts.post_name like %:name% and posts.accepted = true", nativeQuery = true)
     ArrayList<Post> findPostByName(@Param("name") String post_name);
 
-    @Query(value = "select * from posts order by posts.time_created desc limit 0,10", nativeQuery = true)
+    @Query(value = "select * from posts where posts.accepted = true order by posts.time_created desc limit 0,10", nativeQuery = true)
     ArrayList<Post> findPostByTime();
 
     @Query(value = "select * from posts where posts.username = :username", nativeQuery = true)

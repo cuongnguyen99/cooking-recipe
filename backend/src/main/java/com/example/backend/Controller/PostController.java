@@ -5,6 +5,7 @@ import com.example.backend.Entity.Post;
 import com.example.backend.Entity.Resource;
 import com.example.backend.Entity.Step;
 import com.example.backend.Service.PostService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@Slf4j
 public class PostController {
     @Autowired
     PostService postService;
@@ -77,11 +79,10 @@ public class PostController {
         return ResponseEntity.created(uri).body(postService.updatePost(post));
     }
 
-    @DeleteMapping("post/delete")
-    public ResponseEntity<Post> deletePost(@RequestBody Post post) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/delete").toUriString());
-        postService.removePost(post);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("post/delete/{post_id}")
+    public void deletePost(@PathVariable(name = "post_id") int id) {
+        log.info("Delete api here");
+        postService.removePost(id);
     }
 
     @PostMapping("post/savenewpost")

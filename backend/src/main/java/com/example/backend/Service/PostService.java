@@ -79,13 +79,15 @@ public class PostService {
         return steps;
     }
 
-    public void removePost(Post post) {
+    public void removePost(int id) {
+        Post post = postRepository.findById(id);
         log.info("Delete post!");
         post.setUsername(null);
         postRepository.delete(post);
     }
 
     public Post updatePost(Post post) {
+        log.info("Save Post");
         postRepository.save(post);
         return post;
     }
