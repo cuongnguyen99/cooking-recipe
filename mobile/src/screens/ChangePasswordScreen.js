@@ -148,8 +148,8 @@ function ChangePasswordScreen({navigation, route}) {
                     onChangeText={(text) => handleCurrentPasswordChange(text)}
                 />
                 {currentPassword.secure ? 
-                <Icon name='eye-off' size={24} color={colors.text_black} style={styles.editable} onPress={onSecureCurrentPassPress}/>
-                : <Icon name='eye' size={24} color={colors.text_black} style={styles.editable} onPress={onSecureCurrentPassPress}/>
+                <Icon name='eye-off' size={20} color={colors.text_secondary} style={styles.editable} onPress={onSecureCurrentPassPress}/>
+                : <Icon name='eye' size={20} color={colors.text_secondary} style={styles.editable} onPress={onSecureCurrentPassPress}/>
                 }
                 
             </View>
@@ -163,8 +163,8 @@ function ChangePasswordScreen({navigation, route}) {
                     onChangeText={(text) => handlePasswordChange(text)}
                 />
                 {password.secure ? 
-                <Icon name='eye-off' size={24} color={colors.text_black} style={styles.editable} onPress={onSecurePassPress}/>
-                : <Icon name='eye' size={24} color={colors.text_black} style={styles.editable} onPress={onSecurePassPress}/>
+                <Icon name='eye-off' size={20} color={colors.text_secondary} style={styles.editable} onPress={onSecurePassPress}/>
+                : <Icon name='eye' size={20} color={colors.text_secondary} style={styles.editable} onPress={onSecurePassPress}/>
                 }
             </View>
             {isFieldInError("password") && getErrorsInField("password").map(errMessage => (
@@ -179,8 +179,8 @@ function ChangePasswordScreen({navigation, route}) {
                     onChangeText={(text) => handleConfirmPasswordChange(text)}
                 />
                 {confirm.secure ? 
-                <Icon name='eye-off' size={24} color={colors.text_black} style={styles.editable} onPress={onSecureConfirmPress}/>
-                : <Icon name='eye' size={24} color={colors.text_black} style={styles.editable} onPress={onSecureConfirmPress}/>
+                <Icon name='eye-off' size={20} color={colors.text_secondary} style={styles.editable} onPress={onSecureConfirmPress}/>
+                : <Icon name='eye' size={20} color={colors.text_secondary} style={styles.editable} onPress={onSecureConfirmPress}/>
                 }
             </View>
             {isFieldInError("confirm") && getErrorsInField("confirm").map(errMessage => (

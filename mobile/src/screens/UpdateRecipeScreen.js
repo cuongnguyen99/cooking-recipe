@@ -20,39 +20,97 @@ import categoriesApi from '../ultility/api/category';
 import foodAPI from '../ultility/api/food';
 import AppLoading from './AppLoading';
 import Toast from 'react-native-simple-toast';
+import UploadScreen from '../components/UploadScreen';
 
 
 function UpdateRecipeScreen({navigation, route}) {
     const {user, accessToken} = useContext(AuthContext);
-    const [loading, setloading] = useState(false);
+    const post = route.params.item;
+    const [postUpdate, setPostUpdate] = useState(post);
     const [disable, setDisable] = useState(true);
-    const [title, setTitle] = useState('');
-    const [des, setDes] = useState('');
+    const [title, setTitle] = useState(postUpdate.post_name);
+    const [des, setDes] = useState(postUpdate.description);
     const [category, setCategory] = useState();
     const [categories, setCategories] = useState([]);
-    const [image, setImage] = useState();
-    const [resources, setResources] = useState([
-        {
-            description: '',
-        },
-    ]);
-    const [steps, setSteps] = useState([
-        {
-            stepNumber: 1,
-            description: '',
-        },
-    ]);
+    const [image, setImage] = useState(postUpdate.images);
+    const [newImage, setNewImage] = useState();
+    const [resources, setResources] = useState(postUpdate.resources);
+    const [steps, setSteps] = useState(postUpdate.steps);
+
+    const [uploadVisible, setUploadVisible] = useState(false);
+    const [progress, setProgress] = useState(0);
 
     useEffect( () => {
         getCategories();
     }, []);
+
+    useEffect(() => {
+        if(newImage || post != postUpdate) {
+            setDisable(false);
+        }
+        else if(Object.is(post, postUpdate)) {
+            setDisable(true);
+        }
+        else {
+            setDisable(true);
+        }
+    }, [steps, resources, des, title, category, image, newImage]);
+
+    const onUploadPress = async () => {
+        try {
+            setProgress(0);
+            setUploadVisible(true);
+            let newPost = {...postUpdate};
+
+            if(newImage) {
+                const imageUpload = [];
+                const imageApi = api.create({baseURL: "https://api.cloudinary.com/v1_1/mycooknltc/"});
+                for(var i=0; i<newImage.length; i++) {
+                    const data = new FormData();
+                    data.append("file", newImage[i]);
+                    data.append("upload_preset", "bnkilven");
+
+                    const result = await imageApi.post("image/upload", data);
+                    console.log("image");
+
+                    if(!result.ok) {
+                        console.log(result.problem);
+                        setUploadVisible(false);
+                        return Toast.showWithGravity("Error when uploading image to server! Please try later!", Toast.LONG, Toast.TOP);
+                    }
+                    imageUpload.push({imgUrl: result.data.url});
+                }
+                newPost.images = imageUpload;
+            }
+            console.log(newPost);
+            const rs = await foodAPI.updatePost(newPost, accessToken, progress => setProgress(progress));
+            if(!rs.ok) {
+                console.log(rs.problem);
+                setUploadVisible(false);
+                return Toast.showWithGravity("Error when updating your Recipe! Please try later!", Toast.LONG, Toast.TOP);
+            }
+            setTimeout(() => {
+                navigation.goBack();
+            }, 2000);
+
+        } catch (error) {
+            setUploadVisible(false);
+            console.error(error.message);
+            return Toast.showWithGravity(error.message, Toast.LONG, Toast.TOP);
+        }
+    }
 
     const getCategories = async () => {
         const result = await categoriesApi.getCategory();
         if(!result.ok) {
             return console.log("Error when getting categories!");
         }
+        const data = result.data;
         setCategories(result.data);
+        const defaultCategory = data.find(item => {
+            return item.id == post.categoryID;
+        })
+        setCategory(defaultCategory);
     }
 
     const handleImage = () => {
@@ -77,7 +135,7 @@ function UpdateRecipeScreen({navigation, route}) {
                     type: `image/${item.path.split(".")[2]}`,
                 });
             });
-            setImage(imageList);
+            setNewImage(imageList);
         })
         .catch(error => console.log(error.message));
     }
@@ -108,6 +166,10 @@ function UpdateRecipeScreen({navigation, route}) {
             }
         });
         setResources(newArr);
+
+        let newRecipe = {...postUpdate};
+        newRecipe.resources = newArr;
+        setPostUpdate(newRecipe);
     }
 
     const handleRemoveStep = (item, index) => {
@@ -126,6 +188,10 @@ function UpdateRecipeScreen({navigation, route}) {
             }
         });
         setSteps(tempt);
+
+        let newRecipe = {...postUpdate};
+        newRecipe.resources = tempt;
+        setPostUpdate(newRecipe);
     }
     
     const handleResourceChange = (text, item, index) => {
@@ -134,6 +200,10 @@ function UpdateRecipeScreen({navigation, route}) {
         newResource[index].description = text;
         
         setResources(newResource);
+        
+        let newRecipe = {...postUpdate};
+        newRecipe.resources = resources;
+        setPostUpdate(newRecipe);
     }
 
     const handleStepChange = (text, item, index) => {
@@ -142,6 +212,10 @@ function UpdateRecipeScreen({navigation, route}) {
         newStep[index].description = text;
 
         setSteps(newStep);
+
+        let newRecipe = {...postUpdate};
+        newRecipe.steps = steps;
+        setPostUpdate(newRecipe);
     }
 
     return (
@@ -152,8 +226,8 @@ function UpdateRecipeScreen({navigation, route}) {
             <View style={styles.imageContainer}>
                 <ImageBackground
                     source={
-                        image ? {uri: image[0].uri} 
-                        : {uri: 'https://res.cloudinary.com/cooking-recipe/image/upload/v1653375885/canstockphoto35091073_pltq5b.jpg'}
+                        newImage ? {uri: newImage[0].uri} 
+                        : {uri: image[0].imgUrl}
                     }
                     style={styles.image}
                 >
@@ -181,6 +255,7 @@ function UpdateRecipeScreen({navigation, route}) {
                 <SelectDropdown
                     data={categories}
                     defaultButtonText="Select category"
+                    defaultValue={category}
                     buttonStyle={styles.picker}
                     buttonTextStyle={styles.picker_text}
                     onSelect={(selectedItem, index) => setCategory(selectedItem)}
@@ -256,6 +331,11 @@ function UpdateRecipeScreen({navigation, route}) {
                 : (<Button style={styles.button} title='Update' titleStyle={{fontSize: 20, fontWeight: 'normal'}} onPress={onUploadPress}/>)
             }
             </ScrollView>
+            <UploadScreen
+                onDone={() => setUploadVisible(false)}
+                progress={progress}
+                visible={uploadVisible}
+            />
         </Screen>
     );
 }
@@ -337,7 +417,7 @@ const styles = StyleSheet.create({
         marginTop: 15,
     },
     picker_text: {
-        color: colors.text_secondary,
+        color: colors.text_black,
         textAlign: 'left',
         marginLeft: 0,
         fontSize: 16

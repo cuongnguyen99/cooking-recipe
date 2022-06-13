@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo, useCallback} from 'react';
+import React, {useState, useEffect, useMemo, useCallback, useLayoutEffect} from 'react';
 import {FlatList, ScrollView, StyleSheet, View, SectionList} from 'react-native';
 import Toast from 'react-native-simple-toast';
 
@@ -18,12 +18,13 @@ function HomeScreen({navigation, route}) {
     const [section, setSection] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        setLoading(true);
-        setTimeout(() => {
+    useLayoutEffect(() => {
+        const unsubcribe = navigation.addListener('focus', () => {
+            setLoading(true);
             handleData();
-        }, 3000);
-    }, []);
+        });
+        return unsubcribe;
+    }, [navigation]);
 
     const handleData = () => {
         Promise.all([handleGetCategory(), handleGetNewest()]).then(([categoryData, newestData]) => {
@@ -90,7 +91,7 @@ function HomeScreen({navigation, route}) {
             <NewFood
                 title={item.post_name}
                 avatar={item.username.image_url}
-                image={item.images[0].img_url}
+                image={item.images[0].imgUrl}
                 onPress={() => newArivalPress(item)}
             />
             <View style={styles.categoryFooter}></View>

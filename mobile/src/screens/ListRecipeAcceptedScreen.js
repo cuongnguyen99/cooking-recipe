@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import userApi from '../ultility/api/user';
 import colors from '../styles/colors';
 
-function YourRecipeScreen({navigation, route}) {
+function ListRecipeAcceptedScreen({navigation, route}) {
     const {user, accessToken} = useContext(AuthContext);
     const [post, setPost] = useState([]);
     const [postAccepted, setPostAccepted] = useState([]);
@@ -18,8 +18,11 @@ function YourRecipeScreen({navigation, route}) {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        getPostCreated();
-    }, []);
+        const unsubcribe = navigation.addListener('focus', () => {
+            getPostCreated();
+        });
+        return unsubcribe;
+    }, [navigation]);
 
     const getPostCreated = async () => {
         setLoading(true);
@@ -34,11 +37,9 @@ function YourRecipeScreen({navigation, route}) {
             return item.accepted == true;
         });
         setPostAccepted(accepted);
-        const not_accepted = data.filter((item) => {
-            return item.accepted == false;
-        });
-        setPostWaiting(not_accepted);
-        setLoading(false);
+        setTimeout(() => {
+            setLoading(false);
+        }, 1000);
         return;
     }
 
@@ -50,18 +51,11 @@ function YourRecipeScreen({navigation, route}) {
             navigation.navigate("UpdateRecipe", {item: item});
         }
     }
-    //list chevron-down
+
     return (
         <>
         <Screen>
             <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.headerContainer}>
-                <View style={{flexDirection: 'row', alignItems: "center"}}>
-                    <Icon name='list'  size={30} color={colors.text_primary}/>
-                    <AppText style={styles.header}>Approved Recipe</AppText>
-                </View>
-                <Icon name='chevron-down'  size={30} color={colors.text_primary}/>
-            </View>
             {    
                 !postAccepted.length ? (<AppText style={styles.nofity}>None of your recipes have been approved yet...</AppText>) :
                 (postAccepted.map((item, index) => {
@@ -93,44 +87,6 @@ function YourRecipeScreen({navigation, route}) {
                     );
                 }) 
                 )
-            }
-            <View style={styles.headerContainer}>
-                <View style={{flexDirection: 'row', alignItems: "center"}}>
-                    <Icon name='list'  size={30} color={colors.text_primary}/>
-                    <AppText style={styles.header}>Waiting For Approval</AppText>
-                </View>
-                <Icon name='chevron-down'  size={30} color={colors.text_primary}/>
-            </View>
-            {
-                !postWaiting.length ? (<AppText style={styles.nofity}>All your recipes have been approved!</AppText>) :
-                (postWaiting.map((item, index) => {
-                    if(index == (postWaiting.length - 1)) {
-                        return (
-                            <View style={styles.item_bottom} key={item.id}>
-                                <HorPost
-                                    title={item.post_name}
-                                    mainImg={item.images[0].imgUrl}
-                                    description={item.description}
-                                    userImg={item.username.image_url}
-                                    username={item.username.username}
-                                    onPress={() => handleClickOnFood(item)}
-                                />
-                            </View>
-                        );
-                    }
-                    return (
-                        <View style={styles.item} key={item.id}>
-                            <HorPost
-                                title={item.post_name}
-                                mainImg={item.images[0].imgUrl}
-                                description={item.description}
-                                userImg={item.username.image_url}
-                                username={item.username.username}
-                                onPress={() => handleClickOnFood(item)}
-                            />
-                        </View>
-                    );
-                }))
             }
             </ScrollView>
         </Screen>
@@ -174,4 +130,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default YourRecipeScreen;
+export default ListRecipeAcceptedScreen;

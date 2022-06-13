@@ -10,8 +10,11 @@ function SaveScreen({navigation, route}) {
     const [post, setPost] = useState([]);
 
     useEffect(() => {
-        console.log(user);
-        setPost(user.post);
+        const unsubcribe = navigation.addListener('focus', () => {
+            console.log(user);
+            setPost(user.post);
+        });
+        return unsubcribe;
     }, [navigation])
 
     const handleClickOnFood = (item) => {

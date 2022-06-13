@@ -27,7 +27,7 @@ const saveFood = (post, username, accessToken) => {
         {headers: {
             Authorization: "Bearer "+ accessToken
         }}
-    )
+    );
 }
 
 const saveResources = (resources, postID, accessToken) => {
@@ -38,7 +38,7 @@ const saveResources = (resources, postID, accessToken) => {
         {headers: {
             Authorization: "Bearer "+ accessToken
         }}
-    )
+    );
 
 };
 
@@ -50,7 +50,7 @@ const saveSteps = (steps, postID, accessToken) => {
         {headers: {
             Authorization: "Bearer "+ accessToken
         }}
-    )
+    );
 
 };
 
@@ -62,24 +62,41 @@ const saveImages = (images, postID, accessToken) => {
         {headers: {
             Authorization: "Bearer "+ accessToken
         }}
-    )
+    );
 };
 
-const updatePost = (post, accessToken) => {
+const updatePost = (post, accessToken, onUploadProgress) => {
     return api.put(
         "post/update",
         post, 
         {
-            headers: {Authorization: "Bearer "+accessToken}
+            headers: {Authorization: "Bearer "+accessToken},
+            onUploadProgress: (progress) => onUploadProgress(progress.loaded / progress.total)
         }
-    )
+    );
+}
+
+const acceptPost = (post, accessToken) => {
+    return api.put("post/update",
+    post, 
+    {
+        headers: {Authorization: "Bearer "+accessToken}
+    })
 }
 
 const getPostNotAccept = (accessToken) => {
-    return api.get("post/accept", {}, {headers: {Authorization: "Bearer "+accessToken}})
+    return api.get("post/accept", {}, {headers: {Authorization: "Bearer "+accessToken}});
+}
+
+const deletePost = (postID, accessToken, onUploadProgress) => {
+    console.log(postID);
+    return api.any({method: "DELETE", url: "post/delete/"+postID, params: {}, 
+        headers: {Authorization: "Bearer "+accessToken},
+        onUploadProgress: (progress) => onUploadProgress(progress.loaded / progress.total)
+    })
 }
 
 
-export default {getFoodByID, getFoodByCategory, getFoodByName, getNewFood, saveFood, saveResources, saveSteps, saveImages, updatePost, getPostNotAccept};
+export default {getFoodByID, getFoodByCategory, getFoodByName, getNewFood, saveFood, saveResources, saveSteps, saveImages, updatePost, getPostNotAccept, deletePost, acceptPost};
 
 

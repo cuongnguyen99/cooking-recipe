@@ -14,7 +14,6 @@ function ProfileScreen({navigation, route}) {
     const [loading, setLoading] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
 
-    console.log(user);
     useEffect(() => {
         if(!user) {
             navigation.replace("Auth");
@@ -63,9 +62,11 @@ function ProfileScreen({navigation, route}) {
                
                 <Listing title={'My Information'} icon={'info'} style={styles.listing} onPress={() => navigation.navigate("ChangeProfile")} />
                 <Listing title={'Change Password'} icon={'lock'} style={styles.listing} onPress={() => navigation.navigate("ChangePassword")}/>
-                <Listing title={'My Recipe'} icon={'book'} style={styles.listing} onPress={() => {navigation.navigate("YourRecipe")}}/>
-                {isAdmin ? <Listing title={'Manage Recipe'} icon={'clipboard'} style={styles.listing} onPress={() => {navigation.navigate("YourRecipe")}}/> : null}
-                
+                {isAdmin ? 
+                    <Listing title={'Manage Recipe'} icon={'clipboard'} style={styles.listing} onPress={() => {navigation.navigate("ListManage")}}/> 
+                    : 
+                    <Listing title={'My Recipe'} icon={'book'} style={styles.listing} onPress={() => {navigation.navigate("YourRecipe")}}/>
+                }
 
             </View>
             <Button style={styles.button} title='Sign Out' onPress={handleSignOut}/>

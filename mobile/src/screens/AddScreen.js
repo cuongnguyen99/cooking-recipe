@@ -20,9 +20,11 @@ import categoriesApi from '../ultility/api/category';
 import foodAPI from '../ultility/api/food';
 import AppLoading from './AppLoading';
 import Toast from 'react-native-simple-toast';
+import WarningScreen from './WarningScreen';
 
 function AddScreen({navigation, route}) {
     const {user, accessToken} = useContext(AuthContext);
+    const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setloading] = useState(false);
     const [disable, setDisable] = useState(true);
     const [title, setTitle] = useState('');
@@ -43,6 +45,7 @@ function AddScreen({navigation, route}) {
     ]);
 
     useEffect( () => {
+        checkAdmin();
         getCategories();
     }, []);
 
@@ -71,6 +74,15 @@ function AddScreen({navigation, route}) {
         setCategories(result.data);
     }
 
+    const checkAdmin = () => {
+        const roleArr = user.roles;
+        const check = roleArr.some(item => {
+            return item.id == 2;
+        });
+        if(check) {
+            setIsAdmin(true);
+        }
+    }
 
     const onUploadPress = async () => {
         try {
@@ -90,13 +102,8 @@ function AddScreen({navigation, route}) {
                     setloading(false);
                     return Toast.showWithGravity("Error when uploading image to server! Please try later!", Toast.LONG, Toast.TOP);
                 }
-
-                console.log("2");
                 imageUpload.push({imgUrl: result.data.url});
             }
-
-            console.log("Oke");
-            console.log(imageUpload);
 
             const post = {
                 "post_name": title,
@@ -344,6 +351,7 @@ function AddScreen({navigation, route}) {
             </ScrollView>
         </Screen>
         {loading ? <AppLoading/> : null}
+        {isAdmin ? <WarningScreen/> : null}
         </>
     );
 }

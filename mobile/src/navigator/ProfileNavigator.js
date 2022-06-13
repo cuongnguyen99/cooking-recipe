@@ -10,6 +10,9 @@ import colors from '../styles/colors';
 import YourRecipeScreen from '../screens/YourRecipeScreen';
 import UpdateRecipeScreen from '../screens/UpdateRecipeScreen';
 import DetailScreen from '../screens/DetailScreen';
+import ManageListScreen from '../screens/ManageListScreen';
+import ManageRecipeScreen from '../screens/ManageRecipeScreen';
+import MyRecipeNavigator from './MyRecipeNavigator';
 
 const ProfileStack = createNativeStackNavigator();
 
@@ -53,20 +56,37 @@ function ProfileNavigator({navigation, route}) {
                 />
                 <ProfileStack.Screen
                     name='YourRecipe'
-                    component={YourRecipeScreen}
-                    options={{
-                        headerShown: true,
-                        title: "Your Recipe",
-                        headerTitleAlign: 'center'
-                    }}
+                    component={MyRecipeNavigator}
                 />
                 <ProfileStack.Screen
                     name='UpdateRecipe'
                     component={UpdateRecipeScreen}
+                    options={{
+                        headerShown: true,
+                        title: "Update Recipe",
+                        headerTitleAlign: 'center'
+                    }}
                 />
                 <ProfileStack.Screen
                     name='DetailRecipe'
                     component={DetailScreen}
+                />
+                <ProfileStack.Screen
+                    name='ListManage'
+                    component={ManageListScreen}
+                    options={{
+                        headerShown: true,
+                        title: "Recipe List",
+                        headerTitleAlign: 'center'
+                    }}
+                />
+                <ProfileStack.Screen
+                    name='ManageRecipe'
+                    component={ManageRecipeScreen}
+                    options={{
+                        headerShown: true,
+                        headerTitleAlign: 'center'
+                    }}
                 />
             </ProfileStack.Navigator>
         );

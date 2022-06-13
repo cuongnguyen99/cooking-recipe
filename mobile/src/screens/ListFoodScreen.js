@@ -17,9 +17,6 @@ function ListFoodScreen({navigation, route}) {
     useLayoutEffect(() => {
         navigation.setOptions({
             headerShown: true,
-            headerStyle: {
-                backgroundColor: colors.primary
-            },
             headerBackVisible: true,
             headerTitle: ''
         });
@@ -43,8 +40,6 @@ function ListFoodScreen({navigation, route}) {
 
     return (
         <Screen style={styles.screen}>
-            <StatusBar backgroundColor={colors.primary} barStyle='dark-content'/>
-
             <FlatList
                 numColumns={2}
                 data={posts}
