@@ -88,6 +88,9 @@ public class PostService {
 
     public Post updatePost(Post post) {
         log.info("Save Post");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(("yyyy/MM/dd HH:mm:ss"));
+        LocalDateTime now = LocalDateTime.now();
+        post.setTime(dtf.format(now));
         postRepository.save(post);
         return post;
     }
@@ -95,6 +98,9 @@ public class PostService {
     public Post saveNewPost(Post post, String username) {
         User user = userRepository.findByUsername(username);
         post.setUsername(user);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(("yyyy/MM/dd HH:mm:ss"));
+        LocalDateTime now = LocalDateTime.now();
+        post.setTime(dtf.format(now));
         return postRepository.save(post);
     }
 
