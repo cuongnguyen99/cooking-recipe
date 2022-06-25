@@ -24,10 +24,17 @@ function SaveScreen({navigation, route}) {
     return (
         <Screen>
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={styles.headerContainer}>
-                        <AppText style={styles.header} numberOfLines={1} ellipsizeMode='middle'>Hello Nguyễn Lê Tuấn Cương!</AppText>
+                {
+                    !post.length ? 
+                    (<View style={styles.headerEmpty}>
+                        <AppText style={styles.subHeaderEmpty}>Your favorite recipe is empty!</AppText>
+                    </View>) 
+                    :
+                    (<View style={styles.headerContainer}>
                         <AppText style={styles.subHeader}>Here is your favorite recipes!</AppText>
-                    </View>
+                    </View>)
+                }
+                
                 {
                     post.map(item => {
                         return (
@@ -59,10 +66,19 @@ const styles = StyleSheet.create({
         fontSize: 30
     },
     subHeader: {
-        marginTop: 5,
+        fontSize: 26,
+        fontWeight: '300'
     },
     item: {
         marginBottom: 20
+    },
+    headerEmpty: {
+       alignSelf: 'center',
+       marginTop: '100%'
+    },
+    subHeaderEmpty: {
+        fontSize: 22,
+        fontWeight: '300'
     }
 })
 

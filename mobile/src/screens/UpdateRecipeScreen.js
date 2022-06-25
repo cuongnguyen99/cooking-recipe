@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {Image, ImageBackground, Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
+import {Image, ImageBackground, Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback, View, TouchableHighlight} from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
 import ImagePicker from 'react-native-image-crop-picker';
 import api from 'apisauce';
@@ -21,6 +21,7 @@ import foodAPI from '../ultility/api/food';
 import AppLoading from './AppLoading';
 import Toast from 'react-native-simple-toast';
 import UploadScreen from '../components/UploadScreen';
+import AppAlert from '../components/AppAlert';
 
 
 function UpdateRecipeScreen({navigation, route}) {
@@ -39,8 +40,13 @@ function UpdateRecipeScreen({navigation, route}) {
 
     const [uploadVisible, setUploadVisible] = useState(false);
     const [progress, setProgress] = useState(0);
+    const [accept, setAccept] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect( () => {
+        navigation.setOptions({
+            headerRight: () => (<HeaderRightButton/>)
+        });
         getCategories();
     }, []);
 
@@ -55,6 +61,32 @@ function UpdateRecipeScreen({navigation, route}) {
             setDisable(true);
         }
     }, [steps, resources, des, title, category, image, newImage]);
+
+    const handleDeleteRecipe = async () => {
+        setAccept(false);
+        try {
+            setLoading(true);
+            const result = await foodAPI.deletePost(post.id, accessToken);
+            if(!result.ok) {
+                console.log(result.problem);
+                setUploadVisible(false);
+                return Toast.showWithGravity("Having some error! Please try later!", Toast.LONG, Toast.TOP);
+            }
+            else if(result.ok) {
+                setTimeout(() => {
+                    setLoading(false);
+                    Toast.showWithGravity("Delete Successfully!", Toast.LONG, Toast.TOP);
+                }, 3000);
+                setTimeout(() => {
+                    navigation.goBack();
+                }, 5000);
+            }
+        } catch (error) {
+            setLoading(false);
+            console.error(error.message);
+            return Toast.showWithGravity(error.message, Toast.LONG, Toast.TOP);
+        }
+    }
 
     const onUploadPress = async () => {
         try {
@@ -89,9 +121,6 @@ function UpdateRecipeScreen({navigation, route}) {
                 setUploadVisible(false);
                 return Toast.showWithGravity("Error when updating your Recipe! Please try later!", Toast.LONG, Toast.TOP);
             }
-            setTimeout(() => {
-                navigation.goBack();
-            }, 2000);
 
         } catch (error) {
             setUploadVisible(false);
@@ -138,6 +167,27 @@ function UpdateRecipeScreen({navigation, route}) {
             setNewImage(imageList);
         })
         .catch(error => console.log(error.message));
+    }
+
+    const handleCategoryChange = (selectedItem) => {
+        setCategory(selectedItem);
+        let newRecipe = {...postUpdate};
+        newRecipe.categoryID = selectedItem.id;
+        setPostUpdate(newRecipe);
+    }
+
+    const handleTitleChange = (text) => {
+        setTitle(text);
+        let newRecipe = {...postUpdate};
+        newRecipe.post_name = text;
+        setPostUpdate(newRecipe);
+    }
+
+    const handleDescriptionChange = (text) => {
+        setDes(text);
+        let newRecipe = {...postUpdate};
+        newRecipe.description = text;
+        setPostUpdate(newRecipe);
     }
 
     const handleAddResource = () => {
@@ -218,7 +268,20 @@ function UpdateRecipeScreen({navigation, route}) {
         setPostUpdate(newRecipe);
     }
 
+    const HeaderRightButton = () => {
+        return (
+            <View style={styles.buttonContainer}>
+                <TouchableHighlight style={styles.delete_button} underlayColor={colors.text_secondary}
+                    onPress={() => setAccept(true)}
+                >
+                    <Icon name='trash-2' size={26} color={colors.text_black} />
+                </TouchableHighlight>
+            </View>
+        );
+    }
+
     return (
+        <>
         <Screen style={styles.screen}>
            <ScrollView showsVerticalScrollIndicator={false}>
 
@@ -246,10 +309,10 @@ function UpdateRecipeScreen({navigation, route}) {
 
             {/* About Food */}
             <View style={styles.aboutFood} >
-                <AppInput title='Dish name' style={styles.input} value={title} onChangeText={text => setTitle(text)}/>
+                <AppInput title='Dish name' style={styles.input} value={title} onChangeText={text => handleTitleChange(text)}/>
                 <AppInput title='Description about your dish'
                     value={des}
-                    onChangeText={text => setDes(text)}
+                    onChangeText={text => handleDescriptionChange(text)}
                     style={[styles.input, {height: 100}]} multiline={true}
                 />
                 <SelectDropdown
@@ -258,7 +321,7 @@ function UpdateRecipeScreen({navigation, route}) {
                     defaultValue={category}
                     buttonStyle={styles.picker}
                     buttonTextStyle={styles.picker_text}
-                    onSelect={(selectedItem, index) => setCategory(selectedItem)}
+                    onSelect={(selectedItem, index) => handleCategoryChange(selectedItem)}
                     buttonTextAfterSelection = {(selectedItem, index) => {
                         return selectedItem.category_name;
                     }}
@@ -331,12 +394,26 @@ function UpdateRecipeScreen({navigation, route}) {
                 : (<Button style={styles.button} title='Update' titleStyle={{fontSize: 20, fontWeight: 'normal'}} onPress={onUploadPress}/>)
             }
             </ScrollView>
-            <UploadScreen
-                onDone={() => setUploadVisible(false)}
-                progress={progress}
-                visible={uploadVisible}
-            />
+            
         </Screen>
+        {
+            accept ? <AppAlert show={accept} message={"Do you exactly wanna delete this recipe?"} cancelText={"No"} confirmText={"Yes"}
+            onCancelPressed={() => {setAccept(false)}}
+            onConfirmPressed={handleDeleteRecipe}
+            /> : null
+        }
+        <UploadScreen
+            onDone={() => {
+                setUploadVisible(false);
+                setTimeout(() => {
+                    navigation.goBack()
+                }, 2000);
+            }}
+            progress={progress}
+            visible={uploadVisible}
+        />
+        {loading ? <AppLoading/> : null}
+        </>
     );
 }
 
@@ -421,6 +498,14 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         marginLeft: 0,
         fontSize: 16
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginRight: 5,
+    },
+    delete_button: {
+        borderRadius: 5
     }
 })
 

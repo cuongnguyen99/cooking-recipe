@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, Text, View, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { ScrollView, Text, View, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native';
 import AppInput from '../components/AppInput';
+import AppText from '../components/AppText';
 import ListingItem from '../components/ListingItem';
 import colors from '../styles/colors';
 import Screen from './Screen';
@@ -16,16 +17,20 @@ import AppLoading from './AppLoading';
 function SearchScreen({navigation, route}) {
     const [input, setInput] = useState('');
     const [filter, setFilter] = useState([]);
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(false);
 
     const {validate, isFieldInError, getErrorsInField, getErrorMessages} = useValidation({state : {input}});
 
     const searchFood = async () => {
         try {
+            setError(true);
+            setErrorMessage("");
+            setFilter([]);
             const valid = validate({
                 input: {required: true},
             });
-            
             if(valid) {
                 setLoading(true);
                 const result = await foodAPI.getFoodByName(input);
@@ -35,6 +40,13 @@ function SearchScreen({navigation, route}) {
                     return Toast.showWithGravity("Error when getting Recipe!", Toast.LONG, Toast.TOP);
                 }
                 const data = result.data;
+                if(data.length === 0) {
+                    setError(true);
+                    setErrorMessage("No result is found!");
+                    setTimeout(() => {
+                        return setLoading(false);
+                    }, 2000); 
+                }
                 setTimeout(() => {
                     setFilter(data);
                     return setLoading(false);
@@ -61,7 +73,7 @@ function SearchScreen({navigation, route}) {
                 <View style={styles.inputContainer}>
                     <AppInput
                         style= {styles.input}
-                        title= 'Nhập tên món ăn cần tìm...'
+                        title= 'Input the name of recipe...'
                         placeholderTextColor= {colors.text_secondary}
                         value= {input}
                         onChangeText= {(text) => setInput(text)}
@@ -87,6 +99,7 @@ function SearchScreen({navigation, route}) {
                     }
                 </ScrollView>
             </ScrollView>
+            {error ? (<View style={styles.errorContainer}><AppText style={styles.error}>{errorMessage}</AppText></View>) : null}
         </Screen>
         {loading ? <AppLoading/> : null}
         </>
@@ -96,7 +109,8 @@ function SearchScreen({navigation, route}) {
 const styles = StyleSheet.create({
     container: {
         marginTop: 90,
-        elevation: 1
+        elevation: 1,
+        flex: 1
     },
     inputContainer: {
         top: 10,
@@ -126,7 +140,13 @@ const styles = StyleSheet.create({
     },
     item: {
         marginBottom: 20
-    }
+    },
+    error: {
+        fontSize: 20,
+        alignSelf: 'center',
+        textAlignVertical: 'center'
+    },
+    
 })
 
 export default SearchScreen;

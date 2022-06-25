@@ -21,6 +21,9 @@ function LoginScreen({navigation, route}) {
     const auth = useContext(AuthContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [secure, setSecure] = useState(true);
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(false);
     
     const {validate, isFieldInError, getErrorsInField, getErrorMessages} = useValidation({
@@ -32,6 +35,8 @@ function LoginScreen({navigation, route}) {
     }
 
     const handleLogin = async () => {
+        setError(false);
+        setErrorMessage("");
         const valid = validate({
             username: {required: true},
             password: {required: true},
@@ -41,7 +46,8 @@ function LoginScreen({navigation, route}) {
             setLoading(true);
             const result = await userApi.login(username, password);
             if(!result.ok) {
-                Toast.showWithGravity("Login fail! " + result.problem, Toast.LONG, Toast.BOTTOM);
+                setError(true);
+                setErrorMessage("Username or password is incorrect!")
                 setLoading(false);
                 return console.log("login fail!");
             }
@@ -86,15 +92,24 @@ function LoginScreen({navigation, route}) {
                     resizeMode='contain'
                 />
                 <View style={styles.inputContainer}>
-                    <AppInput title='Username' style={styles.input} value={username} onChangeText={text => setUsername(text)} onBlur={() => validate({username: {required: true}})}/>
-                    {isFieldInError("username") && getErrorsInField("username").map(errMessage => (
-                        <AppText style={styles.error}>{errMessage}</AppText>
-                    ))}
+                    <View style={styles.inputBox}>
+                        <AppInput title='Username' style={styles.input} value={username} onChangeText={text => setUsername(text)} onBlur={() => validate({username: {required: true}})}/>
+                        {isFieldInError("username") && getErrorsInField("username").map(errMessage => (
+                            <AppText style={styles.error}>{errMessage}</AppText>
+                        ))}
+                    </View>
+                    {error? <AppText style={styles.error}>{errorMessage}</AppText> : null}
 
-                    <AppInput title='Password' style={styles.input} value={password} secureTextEntry onChangeText={text => setPassword(text)} onBlur={() => validate({password: {required: true}})}/>
-                    {isFieldInError("password") && getErrorsInField("password").map(errMessage => (
-                        <AppText style={styles.error}>{errMessage}</AppText>
-                    ))}
+                    <View style={styles.inputBox}>
+                        <AppInput title='Password' style={styles.input} value={password} secureTextEntry={secure} onChangeText={text => setPassword(text)} onBlur={() => validate({password: {required: true}})}/>
+                        {
+                            secure ? <Icon name='eye-off' size={20} color={colors.text_secondary} style={styles.editable} onPress={() => setSecure(false)}/>
+                            : <Icon name='eye' size={20} color={colors.text_secondary} style={styles.editable} onPress={() => setSecure(true)}/>
+                        }
+                        {isFieldInError("password") && getErrorsInField("password").map(errMessage => (
+                            <AppText style={styles.error}>{errMessage}</AppText>
+                        ))}
+                    </View>
                 </View>
                 <View style={styles.buttonContainer}>
                     <Button title='Sign In' style={styles.button} onPress={handleLogin}/>
@@ -149,7 +164,13 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginLeft: 15,
         marginTop: 2
-    }
+    },
+    inputBox: {},
+    editable: {
+        position: 'absolute',
+        right: 20,
+        top: 35
+    },
 })
 
 export default LoginScreen;

@@ -4,13 +4,17 @@ import Icon from 'react-native-vector-icons/Feather';
 import colors from '../styles/colors';
 import AppText from './AppText';
 
-function HeaderNavigate({title, style, onPress}) {
+function HeaderNavigate({title, style, onPress, disable}) {
     return (
         <View style={[styles.container, style]}>
             <AppText style={styles.text}>{title}</AppText>
-            <TouchableOpacity onPress={onPress} activeOpacity={0.3}>
-                <Icon name='arrow-right' size={30} color={colors.secondary} style={styles.icon}/>
-            </TouchableOpacity>
+            {
+                disable ? null : 
+                (<TouchableOpacity onPress={onPress} activeOpacity={0.3}>
+                    <Icon name='arrow-right' size={30} color={colors.secondary} style={styles.icon}/>
+                </TouchableOpacity>)
+            }
+            
         </View>
     );
 }

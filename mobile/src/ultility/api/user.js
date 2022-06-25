@@ -36,6 +36,10 @@ const signup = (username, password, fullname, onUploadProgress) => {
     );
 } 
 
+const checkUser = (username) => {
+    return api.get("user/check?username=" + username);
+}
+
 const getUser = (username, access_token) => {
     return api.get("user/infor?username=" + username, {}, {headers: {Authorization: "Bearer " + access_token}});
 }
@@ -79,4 +83,4 @@ const postCreated = (username, access_token) => {
     })
 }
 
-export default {login, signup, getUser, addFavorite, removeFavorite, postCreated, saveUser, changePassword};
+export default {login, signup, getUser, addFavorite, removeFavorite, postCreated, saveUser, changePassword, checkUser};

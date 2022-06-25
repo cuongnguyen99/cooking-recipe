@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useMemo, useCallback, useLayoutEffect} from 'react';
-import {FlatList, ScrollView, StyleSheet, View, SectionList} from 'react-native';
+import {FlatList, ScrollView, StyleSheet, View, SectionList, RefreshControl, ActivityIndicator} from 'react-native';
 import Toast from 'react-native-simple-toast';
 
 import AppText from '../components/AppText';
@@ -11,20 +11,25 @@ import Screen from './Screen';
 import category from '../ultility/api/category';
 import foodAPI from '../ultility/api/food';
 import AppLoading from './AppLoading';
+import colors from '../styles/colors';
 
 function HomeScreen({navigation, route}) {
     const [categories, setCategories] = useState([]);
     const [newest, setNewest] = useState([]);
     const [section, setSection] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [refresh, setRefresh] = useState(false);
 
-    useLayoutEffect(() => {
-        const unsubcribe = navigation.addListener('focus', () => {
-            setLoading(true);
-            handleData();
-        });
-        return unsubcribe;
-    }, [navigation]);
+    useEffect(() => {
+        setLoading(true);
+        handleData();
+    }, []);
+
+    const onRefresh = () => {
+        setCategories([]);
+        setNewest([]);
+        handleData();
+    }
 
     const handleData = () => {
         Promise.all([handleGetCategory(), handleGetNewest()]).then(([categoryData, newestData]) => {
@@ -89,9 +94,9 @@ function HomeScreen({navigation, route}) {
     const renderNewest = useCallback(({item}) => (
         <>
             <NewFood
-                title={item.post_name}
-                avatar={item.username.image_url}
-                image={item.images[0].imgUrl}
+                title={item?.post_name}
+                avatar={item?.username?.image_url}
+                image={item?.images[0]?.imgUrl}
                 onPress={() => newArivalPress(item)}
             />
             <View style={styles.categoryFooter}></View>
@@ -108,10 +113,10 @@ function HomeScreen({navigation, route}) {
                 <HeaderNavigate
                     title="Newest Recipe"
                     style={styles.newFoodHeader}
-                    onPress={handleCategoryPress}
+                    disable={true}
                 />
                 <FlatList
-                    data={section.data}
+                    data={section?.data}
                     keyExtractor={item => item.id}
                     horizontal
                     showsHorizontalScrollIndicator={false}
@@ -138,19 +143,26 @@ function HomeScreen({navigation, route}) {
                     return(
                         <>
                         <HeaderNavigate
-                            title={item.name}
+                            title={item?.name}
                             style={styles.categoryHeader}
                             onPress={() => handleCategoryPress(item.id)}
                         />
                         <Category
-                            title={item.category_name}
-                            image={item.img_url}
+                            title={item?.category_name}
+                            image={item?.img_url}
                             onPress={() => handleCategoryPress(item.id)}
                         />
                         <View style={styles.categoryFooter} />
                         </>
                     )
                 }}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refresh}
+                        onRefresh={onRefresh}
+                        colors={[colors.primary]}
+                    />
+                }
             />
         </Screen>
         {loading ? (<AppLoading/>) : null}

@@ -7,9 +7,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 const heightProduct = 270;
 const heightImg = (heightProduct/100)*60;
 
-function VerPost({image, title, userImg, username, onItemPress, onSavePress, onIconPress}) {
+function VerPost({image, title, userImg, username, onItemPress, onSavePress, onIconPress, style}) {
     return (
-        <View style={styles.product}>
+        <View style={[styles.product, style]}>
             <TouchableHighlight 
                 style={styles.productBox} 
                 activeOpacity={0.78}  
@@ -34,7 +34,6 @@ function VerPost({image, title, userImg, username, onItemPress, onSavePress, onI
                     </View>
                 </View>
             </TouchableHighlight>
-            <Icon name='bookmark' onPress={onIconPress} size={32} style={styles.icon} />
         </View>
     );
 }

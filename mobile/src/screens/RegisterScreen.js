@@ -17,6 +17,10 @@ function RegisterScreen({navigation, route}) {
     const [password, setPassword] = useState("");
     const [fullname, setFullname] = useState("");
     const [confirm, setConfirm] = useState("");
+    const [passwordSecure, setPasswordSecure] = useState(true);
+    const [confirmSecure, setConfirmSecure] = useState(true);
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const [uploadVisible, setUploadVisible] = useState(false);
     const [progress, setProgress] = useState(0);
 
@@ -28,8 +32,10 @@ function RegisterScreen({navigation, route}) {
     }
 
     const handleSignup = async () => {
+        setError(false);
+        setErrorMessage("");
         const valid = validate({
-            username: {minlength: 8, maxlength: 20, required: true},
+            username: {minlength: 6, maxlength: 20, required: true},
             password: {minlength: 6, required: true},
             fullname: {required: true},
             confirm: {equalPassword: password},
@@ -39,6 +45,8 @@ function RegisterScreen({navigation, route}) {
             setUploadVisible(true);
             const result = await userAPI.signup(username, password, fullname, progress => setProgress(progress));
             if(!result.ok) {
+                setError(true);
+                setErrorMessage("User already exists!");
                 setUploadVisible(false);
                 return console.log(result.problem);
             }
@@ -75,25 +83,42 @@ function RegisterScreen({navigation, route}) {
                     resizeMode='contain'
                 />
                 <View style={styles.inputContainer}>
-                    <AppInput title='Fullname' style={styles.input} onChangeText={text => setFullname(text)} onBlur={() => validate({fullname: {required: true}})}/>
-                    {isFieldInError("fullname") && getErrorsInField("fullname").map(errMessage => (
-                        <AppText style={styles.error}>{errMessage}</AppText>
-                    ))}
+                    <View style={styles.inputBox}>
+                        <AppInput title='Fullname' style={styles.input} onChangeText={text => setFullname(text)} onBlur={() => validate({fullname: {required: true}})}/>
+                        {isFieldInError("fullname") && getErrorsInField("fullname").map(errMessage => (
+                            <AppText style={styles.error}>{errMessage}</AppText>
+                        ))}
+                    </View>
 
-                    <AppInput title='Username' style={styles.input} onChangeText={text => setUsername(text)} onBlur={() => validate({username: {minlength: 8, maxlength: 20, required: true}})}/>
-                    {isFieldInError("username") && getErrorsInField("username").map(errMessage => (
-                        <AppText style={styles.error}>{errMessage}</AppText>
-                    ))}
+                    <View style={styles.inputBox}>
+                        <AppInput title='Username' style={styles.input} onChangeText={text => setUsername(text)} onBlur={() => validate({username: {minlength: 8, maxlength: 20, required: true}})}/>
+                        {isFieldInError("username") && getErrorsInField("username").map(errMessage => (
+                            <AppText style={styles.error}>{errMessage}</AppText>
+                        ))}
+                    </View>
+                    {error? <AppText style={styles.error}>{errorMessage}</AppText> : null}
 
-                    <AppInput title='Password' style={styles.input} secureTextEntry onChangeText={text => setPassword(text)} onBlur={() => validate({password: {minlength: 6, required: true}})}/>
-                    {isFieldInError("password") && getErrorsInField("password").map(errMessage => (
-                        <AppText style={styles.error}>{errMessage}</AppText>
-                    ))}
+                    <View style={styles.inputBox}>
+                        <AppInput title='Password' style={styles.input} secureTextEntry={passwordSecure} onChangeText={text => setPassword(text)} onBlur={() => validate({password: {minlength: 6, required: true}})}/>
+                        {
+                            passwordSecure ? <Icon name='eye-off' size={20} color={colors.text_secondary} style={styles.editable} onPress={() => setPasswordSecure(false)}/>
+                            : <Icon name='eye' size={20} color={colors.text_secondary} style={styles.editable} onPress={() => setPasswordSecure(true)}/>
+                        }
+                        {isFieldInError("password") && getErrorsInField("password").map(errMessage => (
+                            <AppText style={styles.error}>{errMessage}</AppText>
+                        ))}
+                    </View>
 
-                    <AppInput title='Confirm Password' style={styles.input} secureTextEntry onChangeText={text => setConfirm(text)} onBlur={() => validate({confirm: {equalPassword: password}})}/>
-                    {isFieldInError("confirm") && getErrorsInField("confirm").map(errMessage => (
-                        <AppText style={styles.error}>{errMessage}</AppText>
-                    ))}
+                    <View style={styles.inputBox}>
+                        <AppInput title='Confirm Password' style={styles.input} secureTextEntry={confirmSecure} onChangeText={text => setConfirm(text)} onBlur={() => validate({confirm: {equalPassword: password}})}/>
+                        {
+                            confirmSecure ? <Icon name='eye-off' size={20} color={colors.text_secondary} style={styles.editable} onPress={() => setConfirmSecure(false)}/>
+                            : <Icon name='eye' size={20} color={colors.text_secondary} style={styles.editable} onPress={() => setConfirmSecure(true)}/>
+                        }
+                        {isFieldInError("confirm") && getErrorsInField("confirm").map(errMessage => (
+                            <AppText style={styles.error}>{errMessage}</AppText>
+                        ))}
+                    </View>
 
                 </View>
                 <View style={styles.buttonContainer}>
@@ -148,7 +173,13 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginLeft: 15,
         marginTop: 2
-    }
+    },
+    inputBox: {},
+    editable: {
+        position: 'absolute',
+        right: 20,
+        top: 35
+    },
 })
 
 export default RegisterScreen;

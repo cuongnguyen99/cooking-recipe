@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useContext, useLayoutEffect} from 'react';
-import { Dimensions, Image, ImageBackground, ScrollView, StyleSheet, View, TouchableHighlight } from 'react-native';
+import React, {useState, useEffect, useContext} from 'react';
+import { Dimensions, Image, ImageBackground, ScrollView, StyleSheet, View, TouchableHighlight, BackHandler } from 'react-native';
 import {animatedStyles, scrollInterpolator} from '../utils/animations';
 import Icon from 'react-native-vector-icons/Feather';
 import Toast from 'react-native-simple-toast';
@@ -7,21 +7,21 @@ import Toast from 'react-native-simple-toast';
 import AppText from '../components/AppText';
 import ListingItem from '../components/ListingItem';
 import colors from '../styles/colors';
-import foodApi from '../ultility/api/food';
+import userAPI from '../ultility/api/user';
+import foodAPI from '../ultility/api/food';
 
 import Screen from './Screen';
 import Separator from '../components/Separator';
 import Carousel from 'react-native-snap-carousel';
 import AuthContext from '../ultility/context';
 import AppAlert from '../components/AppAlert';
-import UploadScreen from '../components/UploadScreen';
 import AppLoading from './AppLoading';
 
 const SLIDER_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH);
 const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3/4);
 
-function ManageRecipeScreen({navigation, route}) {
+function RecipeAcceptedScreen({navigation, route}) {
     const {user, accessToken} = useContext(AuthContext);
     const auth = useContext(AuthContext);
     const post = route.params.item;
@@ -29,88 +29,58 @@ function ManageRecipeScreen({navigation, route}) {
     const steps = post.steps;
     const resources = post.resources;
     const [currentIndex, setCurrenIndex] = useState(1);
-    const [uploadVisible, setUploadVisible] = useState(false);
-    const [progress, setProgress] = useState(0);
-    const [loading, setLoading] = useState(false);
     const [accept, setAccept] = useState(false);
-    const [refuse, setRefuse] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         navigation.setOptions({
-            title: '',
-            headerRight: () => (<HeaderButton/>)
+            headerRight: () => (<HeaderRightButton/>)
         });
-    }, [navigation]);
-    
-    const handleConfirmRecipe = async () => {
+    }, []);
+
+    const handleDeleteRecipe = async () => {
         setAccept(false);
         try {
-            setProgress(0);
-            setUploadVisible(true);
-            let newPost = {...post};
-            newPost.accepted = true;
-            
-            const result = await foodApi.updatePost(newPost, accessToken, progress => setProgress(progress));
-            if(!result.ok) {
-                console.log(rs.problem);
-                setUploadVisible(false);
-                return Toast.showWithGravity("Having some error! Please try later!", Toast.LONG, Toast.TOP);
-            }
-        } catch (error) {
-            setUploadVisible(false);
-            console.error(error.message);
-            return Toast.showWithGravity(error.message, Toast.LONG, Toast.TOP);
-        }
-    }
-
-    const handleRefuseRecipe = async () => {
-        setRefuse(false);
-        try {
             setLoading(true);
-            const result = await foodApi.deletePost(post.id, accessToken);
+            const result = await foodAPI.deletePost(post.id, accessToken);
             if(!result.ok) {
                 console.log(result.problem);
                 setUploadVisible(false);
                 return Toast.showWithGravity("Having some error! Please try later!", Toast.LONG, Toast.TOP);
             }
-            else if(result.ok){
+            else if(result.ok) {
                 setTimeout(() => {
                     setLoading(false);
-                    Toast.showWithGravity("Refused this recipe successfully!", Toast.LONG, Toast.TOP);
+                    Toast.showWithGravity("Delete Successfully!", Toast.LONG, Toast.TOP);
                 }, 3000);
                 setTimeout(() => {
                     navigation.goBack();
                 }, 5000);
             }
         } catch (error) {
-            setUploadVisible(false);
+            setLoading(false);
             console.error(error.message);
             return Toast.showWithGravity(error.message, Toast.LONG, Toast.TOP);
         }
-        
     }
 
-    const HeaderButton = () => {
-        return (
+    const HeaderRightButton = () => {
+        return(
             <View style={styles.buttonContainer}>
-                <TouchableHighlight style={styles.button} underlayColor={colors.text_secondary}
+                <TouchableHighlight style={styles.delete_button} underlayColor={colors.text_secondary}
                     onPress={() => setAccept(true)}
                 >
-                    <Icon name='check' size={28} color={colors.text_black} />
-                </TouchableHighlight>
-                <TouchableHighlight style={styles.button} underlayColor={colors.text_secondary}
-                    onPress={() => setRefuse(true)}
-                >
-                    <Icon name='x' size={28} color={colors.text_black} />
+                    <Icon name='trash-2' size={26} color={colors.text_black} />
                 </TouchableHighlight>
             </View>
         );
     }
 
     return (
-    <>
+        <>
         <Screen
-            style={{paddingLeft: 0, paddingRight: 0}}
+            style={{paddingLeft: 0,
+            paddingRight: 0}}
         >
             <ScrollView>
                 <View>
@@ -142,20 +112,6 @@ function ManageRecipeScreen({navigation, route}) {
                 <View style={styles.container}>
                     <AppText style={styles.title} numberOfLines={2} ellipsizeMode='tail'>{post.post_name}</AppText>
 
-                    {/* User */}
-                    <View style={styles.user}>
-                        <Image
-                            style={styles.avatar}
-                            source= {{uri: post.username.image_url}}
-                        />
-                        <View style={{justifyContent: 'space-evenly', marginLeft: 10}}>
-                            <AppText style={{fontWeight: '500', fontSize: 20}}>{post.username.fullname}</AppText>
-                            <AppText style={{fontWeight: '300', fontSize: 16}}>{post.username.username}</AppText>
-                        </View>
-                    </View>
-
-                    {/* Description */}
-                    <Separator style={styles.separator}/>
                     <View style={styles.box_item}>
                         <AppText style={styles.sub_title}>Description</AppText>
                         <AppText>{post.description}</AppText>
@@ -197,28 +153,15 @@ function ManageRecipeScreen({navigation, route}) {
             </ScrollView>
         </Screen>
         {
-            accept ? <AppAlert show={accept} message={"Do you Agree to approve this Recipe?"} cancelText={"Cancel"} confirmText={"Agree"}
-            onConfirmPressed={() => handleConfirmRecipe()}
-            onCancelPressed={() => setAccept(false)}
+            accept ? <AppAlert show={accept} message={"Do you exactly wanna delete this recipe?"} cancelText={"No"} confirmText={"Yes"}
+            onCancelPressed={() => {setAccept(false)}}
+            onConfirmPressed={handleDeleteRecipe}
             /> : null
         }
         {
-            refuse ? <AppAlert show={refuse} message={"Do you Agree to refuse this Recipe?"} cancelText={"Cancel"} confirmText={"Refuse"}
-            onConfirmPressed={handleRefuseRecipe}
-            onCancelPressed={() => setRefuse(false)}
-            /> : null
+            loading ? <AppLoading/> : null
         }
-        <UploadScreen
-            onDone={() => {
-                setUploadVisible(false);
-                setTimeout(() => {
-                    navigation.goBack();
-                }, 2000);
-            }}
-            progress={progress}
-            visible={uploadVisible}
-        />
-    </>
+        </>
     );
 }
 
@@ -281,11 +224,10 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
         alignItems: 'center',
-        width: 80
+        marginRight: 5,
     },
-    button: {
+    delete_button: {
         borderRadius: 5
     },
     imageIndex: {
@@ -301,6 +243,6 @@ const styles = StyleSheet.create({
     index: {
         fontSize: 14
     }
-})
+});
 
-export default ManageRecipeScreen;
+export default RecipeAcceptedScreen;

@@ -2,7 +2,8 @@ import { create } from 'apisauce';
 import cache from '../cache';
 
 const api = create({
-    baseURL: "http://192.168.1.10:8080/api/",
+    baseURL: "http://192.168.1.236:8080/api/",
+    // baseURL: "http://192.168.135.198:8080/api/",
 });
 
 const get = api.get;

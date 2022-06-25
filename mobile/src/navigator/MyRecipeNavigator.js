@@ -9,6 +9,7 @@ const TopTab = createMaterialTopTabNavigator();
 function MyRecipeNavigator({}) {
     return (
         <TopTab.Navigator
+            initialRouteName='Accepted'
             screenOptions={{
                 tabBarActiveTintColor: colors.primary,
                 tabBarIndicatorStyle: {

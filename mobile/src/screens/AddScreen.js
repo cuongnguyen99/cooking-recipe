@@ -125,8 +125,6 @@ function AddScreen({navigation, route}) {
                 foodAPI.saveImages(imageUpload, postID, accessToken)
             ]);
             console.log("Successful!");
-            setloading(false);
-            Toast.showWithGravity("Upload your recipe successfully!", Toast.LONG, Toast.TOP);
             setDes(''); setTitle(''); setImage(null);
             setSteps([
                 {
@@ -141,6 +139,8 @@ function AddScreen({navigation, route}) {
             ]);
             setCategory({});
             setDisable(true);
+            setloading(false);
+            Toast.showWithGravity("Upload your recipe successfully!", Toast.LONG, Toast.TOP);
         } catch (error) {
             console.error(error.message);
             setloading(false);

@@ -4,7 +4,7 @@ import user from "./user";
 const endpoint = "posts/";
 
 const getFoodByID = (foodID) => {
-    return api.get(endpoint + "detail/" + foodID);
+    return api.get("detail/" + foodID);
 }
 
 const getFoodByCategory = (categoryID) => {
@@ -17,6 +17,10 @@ const getFoodByName = (name) => {
 
 const getNewFood = () => {
     return api.get("post/new");
+}
+
+const getFoodRandom = (categoryID) => {
+    return api.get("post/random?categoryID="+categoryID);
 }
 
 const saveFood = (post, username, accessToken) => {
@@ -88,15 +92,14 @@ const getPostNotAccept = (accessToken) => {
     return api.get("post/accept", {}, {headers: {Authorization: "Bearer "+accessToken}});
 }
 
-const deletePost = (postID, accessToken, onUploadProgress) => {
+const deletePost = (postID, accessToken) => {
     console.log(postID);
     return api.any({method: "DELETE", url: "post/delete/"+postID, params: {}, 
-        headers: {Authorization: "Bearer "+accessToken},
-        onUploadProgress: (progress) => onUploadProgress(progress.loaded / progress.total)
+        headers: {Authorization: "Bearer "+accessToken}
     })
 }
 
 
-export default {getFoodByID, getFoodByCategory, getFoodByName, getNewFood, saveFood, saveResources, saveSteps, saveImages, updatePost, getPostNotAccept, deletePost, acceptPost};
+export default {getFoodByID, getFoodByCategory, getFoodByName, getNewFood, saveFood, saveResources, saveSteps, saveImages, updatePost, getPostNotAccept, deletePost, acceptPost, getFoodRandom};
 
 

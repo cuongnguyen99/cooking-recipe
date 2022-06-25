@@ -13,6 +13,7 @@ import DetailScreen from '../screens/DetailScreen';
 import ManageListScreen from '../screens/ManageListScreen';
 import ManageRecipeScreen from '../screens/ManageRecipeScreen';
 import MyRecipeNavigator from './MyRecipeNavigator';
+import RecipeAcceptedScreen from '../screens/RecipeAcceptedScreen';
 
 const ProfileStack = createNativeStackNavigator();
 
@@ -57,6 +58,11 @@ function ProfileNavigator({navigation, route}) {
                 <ProfileStack.Screen
                     name='YourRecipe'
                     component={MyRecipeNavigator}
+                    options={{
+                        headerShown: true,
+                        title: "My Recipe",
+                        headerTitleAlign: 'center'
+                    }}
                 />
                 <ProfileStack.Screen
                     name='UpdateRecipe'
@@ -69,7 +75,12 @@ function ProfileNavigator({navigation, route}) {
                 />
                 <ProfileStack.Screen
                     name='DetailRecipe'
-                    component={DetailScreen}
+                    component={RecipeAcceptedScreen}
+                    options={{
+                        headerShown: true,
+                        title: "",
+                        headerTitleAlign: 'center'
+                    }}
                 />
                 <ProfileStack.Screen
                     name='ListManage'
