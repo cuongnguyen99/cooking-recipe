@@ -30,4 +30,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     @Query(value = "select * from posts where posts.accepted = false", nativeQuery = true)
     ArrayList<Post> findPostNotAccepted();
+
+    @Query(value = "select * from posts where posts.category_id = :categoryID order by rand() limit 4", nativeQuery = true)
+    ArrayList<Post> findPostRandom(@Param("categoryID") int categoryID);
 }

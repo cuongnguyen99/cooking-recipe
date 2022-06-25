@@ -29,6 +29,9 @@ public class UserController {
     @GetMapping("/user/infor")
     public ResponseEntity<User> getUser(@RequestParam String username) { return ResponseEntity.ok().body(userService.getUser(username)); }
 
+    @GetMapping("/user/check")
+    public ResponseEntity<User> checkValidUser(@RequestParam String username) { return ResponseEntity.ok().body(userService.getUser(username)); }
+
     @PostMapping("/user/save")
     public ResponseEntity<User> saveUser(@RequestBody User user) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());

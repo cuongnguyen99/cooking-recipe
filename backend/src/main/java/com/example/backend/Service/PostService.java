@@ -104,6 +104,10 @@ public class PostService {
         return postRepository.save(post);
     }
 
+    public ArrayList<Post> getPostRandom(int categoryID) {
+        return postRepository.findPostRandom(categoryID);
+    }
+
     public ArrayList findPostNotAccepted() {
         return postRepository.findPostNotAccepted();
     }

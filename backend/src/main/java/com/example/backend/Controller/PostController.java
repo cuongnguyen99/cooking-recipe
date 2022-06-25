@@ -97,4 +97,9 @@ public class PostController {
         return ResponseEntity.ok().body(postService.findPostNotAccepted());
     }
 
+    @GetMapping("post/random")
+    public ResponseEntity<ArrayList<Post>> getPostByRandom(@RequestParam int categoryID) {
+        return ResponseEntity.ok().body(postService.getPostRandom(categoryID));
+    }
+
 }
