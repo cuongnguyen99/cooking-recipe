@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, LogBox } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import Screen from './screens/Screen';
 
@@ -11,14 +11,14 @@ import AuthContext from './ultility/context';
 import cache from './ultility/cache';
 import ChangePasswordScreen from './screens/ChangePasswordScreen';
 
+LogBox.ignoreAllLogs(true);
+
 function App() {
   const [user, setUser] = useState(null);
   const [accessToken, setAccessToken] = useState();
 
   useEffect(()=>{
-    setTimeout(() => {
-      SplashScreen.hide();
-    }, 1000);
+    SplashScreen.hide();
   }, []);
 
   useEffect(() => {
