@@ -46,3 +46,7 @@ app = FastAPI()
 def root(post_id: int):
     result = get_similar_recipe(post_id)
     return result
+
+@app.get("/")
+def hello():
+    return {"message": "Hello World"}

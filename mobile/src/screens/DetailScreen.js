@@ -33,8 +33,8 @@ function DetailScreen({navigation, route}) {
     const [save, setSave] = useState(false);
     const [randomRecipe, setRandomRecipe] = useState([]);
     const [recommendRecipe, setRecommendRecipe] = useState([]);
-    const ratingAPI = create({baseURL: "http://192.168.1.236:8080/api/"});
-    const recommendAPI = create({baseURL: "http://192.168.1.236:8000/api/"});
+    const ratingAPI = create({baseURL: "https://cooking-recipe-springboot.herokuapp.com/api/"});
+    const recommendAPI = create({baseURL: "https://cooking-recipe-python.herokuapp.com/api/"});
 
     useEffect(() => {
         checkFavoriteList();
