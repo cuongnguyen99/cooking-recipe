@@ -16,14 +16,18 @@ import Carousel from 'react-native-snap-carousel';
 import AuthContext from '../ultility/context';
 import AppAlert from '../components/AppAlert';
 import AppLoading from './AppLoading';
+import { useSelector } from 'react-redux';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const SLIDER_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH);
 const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3/4);
 
-function RecipeAcceptedScreen({navigation, route}) {
-    const {user, accessToken} = useContext(AuthContext);
-    const auth = useContext(AuthContext);
+function RecipeAcceptedScreen() {
+    const navigation = useNavigation();
+    const route = useRoute();
+    const user = useSelector(state => state.user_slice.user);
+    const accessToken = useSelector(state => state.auth_slice.token);
     const post = route.params.item;
     const images = post.images;
     const steps = post.steps;
@@ -54,7 +58,7 @@ function RecipeAcceptedScreen({navigation, route}) {
                     Toast.showWithGravity("Delete Successfully!", Toast.LONG, Toast.TOP);
                 }, 3000);
                 setTimeout(() => {
-                    navigation.goBack();
+                    navigation.navigate({name: route.name, key: route.key, params: {status: "SUCCESS"}});
                 }, 5000);
             }
         } catch (error) {

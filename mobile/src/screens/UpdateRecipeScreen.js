@@ -22,10 +22,12 @@ import AppLoading from './AppLoading';
 import Toast from 'react-native-simple-toast';
 import UploadScreen from '../components/UploadScreen';
 import AppAlert from '../components/AppAlert';
+import { useSelector } from 'react-redux';
 
 
 function UpdateRecipeScreen({navigation, route}) {
-    const {user, accessToken} = useContext(AuthContext);
+    const user = useSelector(state => state.user_slice.user);
+    const accessToken = useSelector(state => state.auth_slice.token);
     const post = route.params.item;
     const [postUpdate, setPostUpdate] = useState(post);
     const [disable, setDisable] = useState(true);
@@ -76,10 +78,10 @@ function UpdateRecipeScreen({navigation, route}) {
                 setTimeout(() => {
                     setLoading(false);
                     Toast.showWithGravity("Delete Successfully!", Toast.LONG, Toast.TOP);
-                }, 3000);
+                }, 500);
                 setTimeout(() => {
-                    navigation.goBack();
-                }, 5000);
+                    navigation.navigate({name: route.params.parent.name, key: route.params.parent.key, params: {status: "SUCCESS"}});
+                }, 1000);
             }
         } catch (error) {
             setLoading(false);
@@ -114,7 +116,6 @@ function UpdateRecipeScreen({navigation, route}) {
                 }
                 newPost.images = imageUpload;
             }
-            console.log(newPost);
             const rs = await foodAPI.updatePost(newPost, accessToken, progress => setProgress(progress));
             if(!rs.ok) {
                 console.log(rs.problem);
@@ -406,8 +407,8 @@ function UpdateRecipeScreen({navigation, route}) {
             onDone={() => {
                 setUploadVisible(false);
                 setTimeout(() => {
-                    navigation.goBack()
-                }, 2000);
+                    navigation.navigate({name: route.params.parent.name, key: route.params.parent.key, params: {status: "SUCCESS"}});
+                }, 500);
             }}
             progress={progress}
             visible={uploadVisible}

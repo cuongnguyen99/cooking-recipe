@@ -16,14 +16,18 @@ import AuthContext from '../ultility/context';
 import AppAlert from '../components/AppAlert';
 import UploadScreen from '../components/UploadScreen';
 import AppLoading from './AppLoading';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
 const SLIDER_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH);
 const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3/4);
 
-function ManageRecipeScreen({navigation, route}) {
-    const {user, accessToken} = useContext(AuthContext);
-    const auth = useContext(AuthContext);
+function ManageRecipeScreen() {
+    const navigation = useNavigation();
+    const route = useRoute();
+    const user = useSelector(state => state.user_slice.user);
+    const accessToken = useSelector(state => state.auth_slice.token);
     const post = route.params.item;
     const images = post.images;
     const steps = post.steps;
@@ -31,7 +35,6 @@ function ManageRecipeScreen({navigation, route}) {
     const [currentIndex, setCurrenIndex] = useState(1);
     const [uploadVisible, setUploadVisible] = useState(false);
     const [progress, setProgress] = useState(0);
-    const [loading, setLoading] = useState(false);
     const [accept, setAccept] = useState(false);
     const [refuse, setRefuse] = useState(false);
 
@@ -40,7 +43,7 @@ function ManageRecipeScreen({navigation, route}) {
             title: '',
             headerRight: () => (<HeaderButton/>)
         });
-    }, [navigation]);
+    }, [route]);
     
     const handleConfirmRecipe = async () => {
         setAccept(false);

@@ -1,28 +1,26 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useLayoutEffect, useState} from 'react';
 import { FlatList, View, StyleSheet, ScrollView } from 'react-native';
 import AppText from '../components/AppText';
 import HorPost from '../components/HorPost';
 import Screen from './Screen';
-import AuthContext from '../ultility/context';
 import AppLoading from './AppLoading';
-import Icon from 'react-native-vector-icons/Feather';
 
 import userApi from '../ultility/api/user';
 import colors from '../styles/colors';
+import { useSelector } from 'react-redux';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-function ListRecipeNotAcceptedScreen({navigation, route}) {
-    const {user, accessToken} = useContext(AuthContext);
-    const [post, setPost] = useState([]);
-    const [postAccepted, setPostAccepted] = useState([]);
+function ListRecipeNotAcceptedScreen() {
+    const navigation = useNavigation();
+    const route = useRoute();
+    const user = useSelector(state => state.user_slice.user);
+    const accessToken = useSelector(state => state.auth_slice.token);
     const [postWaiting, setPostWaiting] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const unsubcribe = navigation.addListener('focus', () => {
-            getPostCreated();
-        });
-        return unsubcribe;
-    }, [navigation]);
+    useLayoutEffect(() => {
+        getPostCreated();
+    }, [route]);
 
     const getPostCreated = async () => {
         setLoading(true);
@@ -45,10 +43,10 @@ function ListRecipeNotAcceptedScreen({navigation, route}) {
 
     const handleClickOnFood = (item) => {
         if(item.accepted) {
-            navigation.navigate("DetailRecipe", {item: item});
+            navigation.navigate("DetailRecipe", {item: item, parent: {key: route.key, name: route.name}});
         }
         else {
-            navigation.navigate("UpdateRecipe", {item: item});
+            navigation.navigate("UpdateRecipe", {item: item, parent: {key: route.key, name: route.name}});
         }
     }
 

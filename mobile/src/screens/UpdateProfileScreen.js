@@ -14,9 +14,13 @@ import AppInput from '../components/AppInput';
 import AppText from '../components/AppText';
 import UploadScreen from '../components/UploadScreen';
 import userApi from '../ultility/api/user';
+import { useDispatch, useSelector } from 'react-redux';
+import {updateUser} from '../feature/user-slice';
 
 function UpdateProfileScreen({navigation, route}) {
-    const {user, accessToken, setUser} = useContext(AuthContext);
+    const user = useSelector(state => state.user_slice.user);
+    const accessToken = useSelector(state => state.auth_slice.token);
+    const dispatch = useDispatch();
     const [newUser, setNewUser] = useState(user);
     const [image, setImage] = useState();
     const [changed, setChanged] = useState(false);
@@ -70,7 +74,7 @@ function UpdateProfileScreen({navigation, route}) {
                 setUploadVisible(false);
                 return Toast.showWithGravity("Error when updating your profile! Please try later!", Toast.LONG, Toast.TOP);
             }
-            setUser(newUserUpdate);
+            dispatch(updateUser(newUserUpdate));
             setTimeout(() => {
                 navigation.goBack();
             }, 2000);
@@ -159,9 +163,10 @@ export default UpdateProfileScreen;
 
 const styles = StyleSheet.create({
     container: {
-        justifyContent: 'center',
         position: 'relative',
-        flex: 1
+        flex: 1,
+        paddingVertical: 20,
+        justifyContent: 'space-between'
     },
     profile: {
         justifyContent: 'center',
@@ -173,8 +178,6 @@ const styles = StyleSheet.create({
     imgContainer: {
         height: 140,
         width: '100%',
-        position: 'absolute',
-        top: -200,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -190,17 +193,13 @@ const styles = StyleSheet.create({
         borderRadius: 100
     },
     button: {
-        position: 'absolute',
         width: '80%',
-        bottom: 60,
         backgroundColor: colors.primary,
         alignSelf: 'center',
         height: 60
     },
     buttonDisable: {
-        position: 'absolute',
         width: '80%',
-        bottom: 60,
         backgroundColor: colors.primary,
         alignSelf: 'center',
         height: 60,

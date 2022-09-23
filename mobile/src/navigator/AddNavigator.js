@@ -4,20 +4,23 @@ import Screen from '../screens/Screen';
 
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AddScreen from '../screens/AddScreen';
-import AuthContext from '../ultility/context';
+import { useSelector } from 'react-redux';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const AddStack = createNativeStackNavigator();
 
-function AddNavigator({navigation, route}) {
-    const {user} = useContext(AuthContext);
+function AddNavigator() {
+    const navigation = useNavigation();
+    const route = useRoute();
+    const token = useSelector(state => state.auth_slice.token);
 
-    useEffect( ()=> {
-        if(!user) {
+    useEffect(()=> {
+        if(!token) {
             navigation.replace('Auth');
         }
     }, []);
 
-    if(user) {
+    if(token) {
         return (
             <AddStack.Navigator
                 screenOptions={{

@@ -2,12 +2,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
 
 const prefix = "cache";
-const expiryInMinutes = 5;
+const expiryInMinutes = 7;
 
 const isExpired = (item) => {
     const now = moment(Date.now());
     const storedTime = moment(item.timestamp);
-    return now.diff(storedTime, 'minutes') > expiryInMinutes;
+    return now.diff(storedTime, 'days') > expiryInMinutes;
 }
 
 const store = async (key, value) => {
@@ -41,4 +41,12 @@ const get = async (key) => {
     }
 }
 
-export default {store, get}
+const remove = async (key) => {
+    try {
+        await AsyncStorage.removeItem(key);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export default {store, get, remove}

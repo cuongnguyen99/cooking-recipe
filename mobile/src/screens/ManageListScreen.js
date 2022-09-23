@@ -7,19 +7,22 @@ import AuthContext from '../ultility/context';
 import AppLoading from './AppLoading';
 
 import foodApi from '../ultility/api/food';
+import { useSelector } from 'react-redux';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-function ManageListScreen({navigation, route}) {
-    const {user, accessToken} = useContext(AuthContext);
+function ManageListScreen() {
+    const user = useSelector(state => state.user_slice.user);
+    const accessToken = useSelector(state => state.auth_slice.token);
+    const navigation = useNavigation();
+    const route = useRoute();
     const [post, setPost] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const unsubcribe = navigation.addListener('focus', () => {
-            getPosts();
-        });
-        return unsubcribe;
-    }, []);
+        getPosts();
+    }, [route]);
 
+    console.log(post);
     const getPosts = async () => {
         setLoading(true);
         const result = await foodApi.getPostNotAccept(accessToken);

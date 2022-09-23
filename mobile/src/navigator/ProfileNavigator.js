@@ -14,19 +14,24 @@ import ManageListScreen from '../screens/ManageListScreen';
 import ManageRecipeScreen from '../screens/ManageRecipeScreen';
 import MyRecipeNavigator from './MyRecipeNavigator';
 import RecipeAcceptedScreen from '../screens/RecipeAcceptedScreen';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ProfileStack = createNativeStackNavigator();
 
-function ProfileNavigator({navigation, route}) {
-    const {user} = useContext(AuthContext);
+function ProfileNavigator() {
+    const navigation = useNavigation();
+    const route = useRoute();
+    const dispatch = useDispatch();
+    const token = useSelector((state) => state.auth_slice.token);
 
     useEffect(() => {
-        if(!user) {
+        if(!token) {
             navigation.replace("Auth");
         }
     }, []);
 
-    if(user) {
+    if(token) {
         return (
             <ProfileStack.Navigator
                 screenOptions={{

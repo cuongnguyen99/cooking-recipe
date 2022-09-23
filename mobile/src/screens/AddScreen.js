@@ -29,9 +29,11 @@ import foodAPI from '../ultility/api/food';
 import AppLoading from './AppLoading';
 import Toast from 'react-native-simple-toast';
 import WarningScreen from './WarningScreen';
+import { useSelector } from 'react-redux';
 
 function AddScreen({navigation, route}) {
-  const {user, accessToken} = useContext(AuthContext);
+  const user = useSelector(state => state.user_slice.user);
+  const accessToken = useSelector(state => state.auth_slice.token);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setloading] = useState(false);
   const [disable, setDisable] = useState(true);

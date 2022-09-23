@@ -17,14 +17,15 @@ import Screen from './Screen';
 import Separator from '../components/Separator';
 import Carousel from 'react-native-snap-carousel';
 import AuthContext from '../ultility/context';
+import { useSelector } from 'react-redux';
 
 const SLIDER_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH);
 const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3/4);
 
 function DetailScreen({navigation, route}) {
-    const {user, accessToken} = useContext(AuthContext);
-    const auth = useContext(AuthContext);
+    const accessToken = useSelector(state => state.auth_slice.token);
+    const user = useSelector(state => state.user_slice.user);
     const post = route.params.item;
     const images = post.images;
     const steps = post.steps;
@@ -127,28 +128,29 @@ function DetailScreen({navigation, route}) {
 
     const handleSaveFavorite = async () => {
         if(user) {
-            if(save) {
-                const newUser = user.post.filter((item) => item.id != post.id);
-                const result = await userAPI.removeFavorite(user.username, post.id, accessToken);
-                if(!result.ok) {
-                    return console.error("Fail");
-                }
-                auth.setUser(newUser);
-                setSave(false);
-                Toast.showWithGravity("Remove recipe successfully!", Toast.LONG, Toast.BOTTOM);
-            }
-            else if (!save) {
-                const newUser = user;
-                const temp = [...user.post];
-                newUser.post = [...temp, post];
-                const result = await userAPI.addFavorite(user.username, post.id, accessToken);
-                if(!result.ok) {
-                    return console.error("Fail");
-                }
-                auth.setUser(newUser);
-                setSave(true);
-                Toast.showWithGravity("Add recipe to favorite list successfully!", Toast.LONG, Toast.BOTTOM);
-            }
+            // if(save) {
+            //     const newUser = user.post.filter((item) => item.id != post.id);
+            //     const result = await userAPI.removeFavorite(user.username, post.id, accessToken);
+            //     if(!result.ok) {
+            //         return console.error("Fail");
+            //     }
+            //     auth.setUser(newUser);
+            //     setSave(false);
+            //     Toast.showWithGravity("Remove recipe successfully!", Toast.LONG, Toast.BOTTOM);
+            // }
+            // else if (!save) {
+            //     const newUser = user;
+            //     const temp = [...user.post];
+            //     newUser.post = [...temp, post];
+            //     const result = await userAPI.addFavorite(user.username, post.id, accessToken);
+            //     if(!result.ok) {
+            //         return console.error("Fail");
+            //     }
+            //     auth.setUser(newUser);
+            //     setSave(true);
+            //     Toast.showWithGravity("Add recipe to favorite list successfully!", Toast.LONG, Toast.BOTTOM);
+            // }
+            return Toast.showWithGravity("This feature will be available soon!", Toast.LONG, Toast.BOTTOM);
         }
         else {
             return Toast.showWithGravity("You need to Sign In to use this feature!", Toast.LONG, Toast.BOTTOM);

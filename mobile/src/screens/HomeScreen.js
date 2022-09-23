@@ -58,17 +58,26 @@ function HomeScreen({navigation, route}) {
         })
     }
 
+    // const handleData = () => {
+    //     handleGetCategory();
+    // }
+
     const handleGetCategory = async () => {
-        const result = await category.getCategory();
-
-        if(!result.ok) {
-            console.log("Error when reder category!");
-            return;
+        try {
+            const result = await category.getCategory();
+    
+            if(!result.ok) {
+                console.log("Error when get category!");
+                return;
+            }
+    
+            const data = result.data;
+            setCategories(data);
+            setLoading(false);
+            return data;
+        } catch (error) {
+            console.log(error);
         }
-
-        const data = result.data;
-        setCategories(data);
-        return data;
     }
 
     const handleGetNewest = async () => {
@@ -110,11 +119,11 @@ function HomeScreen({navigation, route}) {
                 <AppText style={styles.header}>Hello guys!</AppText>
                 <AppText style={styles.subHeader}>Let's discovery some recipes around here...</AppText>
                 </View>
-                <HeaderNavigate
+                {/* <HeaderNavigate
                     title="Newest Recipe"
                     style={styles.newFoodHeader}
                     disable={true}
-                />
+                /> */}
                 <FlatList
                     data={section?.data}
                     keyExtractor={item => item.id}
@@ -168,6 +177,62 @@ function HomeScreen({navigation, route}) {
         {loading ? (<AppLoading/>) : null}
         </>
     );
+    // return (
+    //     <>
+    //     <Screen>
+    //         <FlatList
+    //             data={categories}
+    //             keyExtractor={item => item.id}
+    //             showsVerticalScrollIndicator={false}
+    //             renderItem={({item, index}) => {
+    //                 if(index === 0) return (
+    //                     <>
+    //                     <View style={styles.categoryFooter}>
+    //                         <View style={styles.headerContainer}>
+    //                             <AppText style={styles.header}>Hello guys!</AppText>
+    //                             <AppText style={styles.subHeader}>Let's discovery some recipes around here...</AppText>
+    //                         </View>
+    //                         <HeaderNavigate
+    //                             title={item?.category_name}
+    //                             style={styles.categoryHeader}
+    //                             onPress={() => handleCategoryPress(item.id)}
+    //                         />
+    //                         <Category
+    //                             image={item?.img_url}
+    //                             title={item?.category_name}
+    //                             onPress={() => handleCategoryPress(item.id)}
+    //                         />
+    //                     </View>
+    //                     </>
+    //                 )
+    //                 return (
+    //                     <View style={styles.categoryFooter}>
+    //                         <HeaderNavigate
+    //                             title={item?.category_name}
+    //                             style={styles.categoryHeader}
+    //                             onPress={() => handleCategoryPress(item.id)}
+    //                         />
+    //                         <Category
+    //                             image={item?.img_url}
+    //                             title={item?.category_name}
+    //                             onPress={() => handleCategoryPress(item.id)}
+    //                         />
+    //                     </View>
+    //                 )
+    //             }
+    //             }
+    //             refreshControl={
+    //                 <RefreshControl
+    //                     refreshing={refresh}
+    //                     onRefresh={onRefresh}
+    //                     colors={[colors.primary]}
+    //                 />
+    //             }
+    //         />
+    //     </Screen>
+    //     {loading ? (<AppLoading/>) : null}
+    //     </>
+    // );
 }
 
 const styles = StyleSheet.create({

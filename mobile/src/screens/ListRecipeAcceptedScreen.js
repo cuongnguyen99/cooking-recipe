@@ -3,26 +3,24 @@ import { FlatList, View, StyleSheet, ScrollView } from 'react-native';
 import AppText from '../components/AppText';
 import HorPost from '../components/HorPost';
 import Screen from './Screen';
-import AuthContext from '../ultility/context';
 import AppLoading from './AppLoading';
-import Icon from 'react-native-vector-icons/Feather';
 
 import userApi from '../ultility/api/user';
 import colors from '../styles/colors';
+import { useSelector } from 'react-redux';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-function ListRecipeAcceptedScreen({navigation, route}) {
-    const {user, accessToken} = useContext(AuthContext);
-    const [post, setPost] = useState([]);
+function ListRecipeAcceptedScreen() {
+    const navigation = useNavigation();
+    const route = useRoute();
+    const user = useSelector(state => state.user_slice.user);
+    const accessToken = useSelector(state => state.auth_slice.token);
     const [postAccepted, setPostAccepted] = useState([]);
-    const [postWaiting, setPostWaiting] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const unsubcribe = navigation.addListener('focus', () => {
-            getPostCreated();
-        });
-        return unsubcribe;
-    }, [navigation]);
+        getPostCreated();
+    }, [route]);
 
     const getPostCreated = async () => {
         setLoading(true);

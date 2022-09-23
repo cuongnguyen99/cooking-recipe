@@ -1,21 +1,20 @@
 import React, {useContext, useEffect, useState} from 'react';
 import { FlatList, View, StyleSheet, ScrollView } from 'react-native';
+import { useSelector } from 'react-redux';
 import AppText from '../components/AppText';
 import HorPost from '../components/HorPost';
-import AuthContext from '../ultility/context';
 import Screen from './Screen';
 
 function SaveScreen({navigation, route}) {
-    const {user, accessToken} = useContext(AuthContext);
-    const [post, setPost] = useState([]);
+    const post = useSelector((state) => state.user_slice.user.post);
 
-    useEffect(() => {
-        const unsubcribe = navigation.addListener('focus', () => {
-            console.log(user);
-            setPost(user.post);
-        });
-        return unsubcribe;
-    }, [navigation])
+    // useEffect(() => {
+    //     const unsubcribe = navigation.addListener('focus', () => {
+    //         console.log(user);
+    //         setPost(user.post);
+    //     });
+    //     return unsubcribe;
+    // }, [navigation])
 
     const handleClickOnFood = (item) => {
         navigation.navigate('Detail', {item: item});
@@ -27,7 +26,7 @@ function SaveScreen({navigation, route}) {
                 {
                     !post.length ? 
                     (<View style={styles.headerEmpty}>
-                        <AppText style={styles.subHeaderEmpty}>Your favorite recipe is empty!</AppText>
+                        <AppText style={styles.subHeaderEmpty}>Coming soon! </AppText>
                     </View>) 
                     :
                     (<View style={styles.headerContainer}>

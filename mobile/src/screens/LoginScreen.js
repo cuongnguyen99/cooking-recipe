@@ -12,19 +12,22 @@ import Screen from './Screen';
 
 import colors from '../styles/colors';
 import userApi from '../ultility/api/user';
-import user from '../ultility/api/user';
-import AuthContext from '../ultility/context';
-import cache from '../ultility/cache';
 import AppLoading from './AppLoading';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import {login} from '../feature/auth-slice';
+import {setUser} from '../feature/user-slice';
 
-function LoginScreen({navigation, route}) {
-    const auth = useContext(AuthContext);
+function LoginScreen() {
+    const navigation = useNavigation();
+    const route = useRoute();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [secure, setSecure] = useState(true);
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch();
     
     const {validate, isFieldInError, getErrorsInField, getErrorMessages} = useValidation({
         state: {username, password}
@@ -35,37 +38,40 @@ function LoginScreen({navigation, route}) {
     }
 
     const handleLogin = async () => {
-        setError(false);
-        setErrorMessage("");
-        const valid = validate({
-            username: {required: true},
-            password: {required: true},
-        });
-
-        if(valid) {
-            setLoading(true);
-            const result = await userApi.login(username, password);
-            if(!result.ok) {
-                setError(true);
-                setErrorMessage("Username or password is incorrect!")
+        try {
+            setError(false);
+            setErrorMessage("");
+            const valid = validate({
+                username: {required: true},
+                password: {required: true},
+            });
+    
+            if(valid) {
+                setLoading(true);
+                const result = await userApi.login(username, password);
+                if(!result.ok) {
+                    setError(true);
+                    setErrorMessage("Username or password is incorrect!")
+                    setLoading(false);
+                    return console.log("login fail!");
+                }
+                const access_token = result.data.access_token;
+                const userInfor = jwtDecode(result.data.access_token);
+                const userData = await userApi.getUser(userInfor.sub, access_token);
+                if(!userData.ok) {
+                    Toast.showWithGravity("Error when getting user's information! " + result.problem, Toast.LONG, Toast.BOTTOM);
+                    setLoading(false);
+                    return console.error("Error when login!");
+                }
+                const user = userData.data;
+                dispatch(login(access_token));
+                dispatch(setUser(user));
                 setLoading(false);
-                return console.log("login fail!");
+                navigation.replace("App");
             }
-            const access_token = result.data.access_token;
-            const userInfor = jwtDecode(result.data.access_token);
-            const userData = await userApi.getUser(userInfor.sub, access_token);
-            if(!userData.ok) {
-                Toast.showWithGravity("Error when getting user's information! " + result.problem, Toast.LONG, Toast.BOTTOM);
-                setLoading(false);
-                return console.error("Error when login!");
-            }
-            const user = userData.data;
-            auth.setAccessToken(access_token);
-            auth.setUser(user);
-            cache.store("user" ,user);
-            cache.store("access_token", access_token);
-            setLoading(false);
-            navigation.replace("App");
+        } catch (error) {
+            console.log(error);
+            Toast.showWithGravity(error.message, Toast.LONG, Toast.BOTTOM);
         }
     }
 

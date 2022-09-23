@@ -1,28 +1,30 @@
-import React, { useState, useContext, useEffect } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useState, useContext, useEffect, useLayoutEffect } from 'react';
 import { View, StyleSheet, Image, FlatList } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import AppText from '../components/AppText';
 import Button from '../components/Button';
 import Listing from '../components/Listing';
 import AuthNavigator from '../navigator/AuthNavigator';
 import colors from '../styles/colors';
-import AuthContext from '../ultility/context';
 import AppLoading from './AppLoading';
 import Screen from './Screen';
+import { logout } from '../feature/auth-slice';
+import { removeUser } from '../feature/user-slice';
 
-function ProfileScreen({navigation, route}) {
-    const {user, accessToken, setUser, setAccessToken}= useContext(AuthContext);
+function ProfileScreen() {
     const [loading, setLoading] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+    const user = useSelector((state) => state.user_slice.user);
+    const navigation = useNavigation();
+    const route = useRoute();
+    const dispatch = useDispatch();
 
-    useEffect(() => {
-        if(!user) {
-            navigation.replace("Auth");
+    useLayoutEffect(() => {
+        if(user) {
+            checkAdmin();
         }
-    }, []);
-
-    useEffect(() => {
-        checkAdmin();
-    }, []);
+    }, [route]);
 
     const checkAdmin = () => {
         const roleArr = user.roles;
@@ -37,9 +39,8 @@ function ProfileScreen({navigation, route}) {
     const handleSignOut = () => {
         setLoading(true);
         setTimeout(() => {
-            setLoading(false);
-            setAccessToken('');
-            setUser(null);
+            dispatch(removeUser());
+            dispatch(logout());
             navigation.replace("App");
         }, 2270);
     }
@@ -56,8 +57,8 @@ function ProfileScreen({navigation, route}) {
                 </View>
                 
                 <View style={styles.content}>
-                    <AppText style={styles.username}>{user.username}</AppText>
-                    <AppText style={styles.fullname}>{user.fullname}</AppText>
+                    <AppText style={styles.username}>{user?.username}</AppText>
+                    <AppText style={styles.fullname}>{user?.fullname}</AppText>
                 </View>
                
                 <Listing title={'My Information'} icon={'info'} style={styles.listing} onPress={() => navigation.navigate("ChangeProfile")} />
@@ -80,7 +81,8 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         position: 'relative',
-        flex: 1
+        flex: 1,
+        paddingTop: 40
     },
     profile: {
         justifyContent: 'center',
@@ -88,11 +90,12 @@ const styles = StyleSheet.create({
         width: '100%',
         borderRadius: 15,
         paddingTop: 80,
-        paddingBottom: 20
+        paddingBottom: 20,
+        marginBottom: 20
     },
     content: {
         alignItems: 'center',
-        marginBottom: 60
+        marginBottom: 40
     },
     imgContainer: {
         height: 140,
@@ -131,12 +134,10 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     button: {
-        position: 'absolute',
         width: '80%',
-        bottom: 60,
         backgroundColor: colors.secondary,
         alignSelf: 'center',
-        height: 60
+        height: 60,
     }
 })
 

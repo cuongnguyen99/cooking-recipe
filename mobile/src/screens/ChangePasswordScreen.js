@@ -11,9 +11,14 @@ import Screen from './Screen';
 import Button from '../components/Button';
 import userApi from '../ultility/api/user';
 import UploadScreen from '../components/UploadScreen';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
-function ChangePasswordScreen({navigation, route}) {
-    const {user, accessToken, setUser} = useContext(AuthContext);
+function ChangePasswordScreen() {
+    const navigation = useNavigation();
+    const route = useRoute();
+    const user = useSelector(state => state.user_slice.user);
+    const accessToken = useSelector(state => state.auth_slice.token);
     const [uploadVisible, setUploadVisible] = useState(false);
     const [progress, setProgress] = useState(0);
     const [newUser, setNewUser] = useState(user);
@@ -61,7 +66,6 @@ function ChangePasswordScreen({navigation, route}) {
                 setUploadVisible(false);
                 return Toast.showWithGravity("Error when changing your password! Please try later!", Toast.LONG, Toast.TOP);
             }
-            setUser(newUserUpdate);
             setTimeout(() => {
                 navigation.goBack();
             }, 2000);
